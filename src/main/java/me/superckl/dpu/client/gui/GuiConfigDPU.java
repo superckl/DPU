@@ -18,12 +18,9 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class GuiConfigDPU extends GuiConfig{
 
-	public GuiConfigDPU(final GuiScreen parentScreen,
-			final List<IConfigElement> configElements, final String modID,
-			final boolean allRequireWorldRestart, final boolean allRequireMcRestart,
-			final String title) {
-		super(parentScreen, configElements, modID, allRequireWorldRestart,
-				allRequireMcRestart, title);
+	public GuiConfigDPU(final GuiScreen parentScreen) {
+		super(parentScreen, GuiConfigDPU.getConfigElements(), ModData.MOD_ID, false,
+				false, LanguageRegistry.instance().getStringLocalization(StringHelper.formatGUIUnlocalizedName("config")));
 	}
 
 	private static List<IConfigElement> getConfigElements(){
@@ -41,7 +38,7 @@ public class GuiConfigDPU extends GuiConfig{
 
 		@Override
 		protected GuiScreen buildChildScreen(){
-			return new GuiConfigDPU(this.owningScreen, new ConfigElement(DPUMod.getInstance().getConfig().getConfigFile().getCategory(Category.GENERAL)).getChildElements()
+			return new GuiConfig(this.owningScreen, new ConfigElement(DPUMod.getInstance().getConfig().getConfigFile().getCategory(Category.GENERAL)).getChildElements()
 					, ModData.MOD_ID, false, false, LanguageRegistry.instance().getStringLocalization(StringHelper.formatGUIUnlocalizedName("config_general")));
 		}
 

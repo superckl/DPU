@@ -2,10 +2,15 @@ package me.superckl.dpu.client.gui;
 
 import java.util.Iterator;
 
-import me.superckl.dpu.ItemHandler;
 import me.superckl.dpu.common.container.ContainerExcludify;
+import me.superckl.dpu.common.container.SlotSearch;
+import me.superckl.dpu.common.network.MessageScrollUpdate;
+import me.superckl.dpu.common.network.MessageTabSelect;
 import me.superckl.dpu.common.reference.ModData;
+import me.superckl.dpu.common.reference.ModItems;
+import me.superckl.dpu.common.utlilty.LogHelper;
 import me.superckl.dpu.common.utlilty.RenderHelper;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.enchantment.Enchantment;
@@ -16,30 +21,61 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 public class GuiContainerExcludify extends GuiContainer{
 
-	private static final ResourceLocation textureSearch = new ResourceLocation(ModData.MOD_ID+":textures/gui/excludifysearch.png");
-	private static final ResourceLocation textureActive = new ResourceLocation(ModData.MOD_ID+":textures/gui/excludifyactive.png");
+	private static final ResourceLocation textureSearch = new ResourceLocation(ModData.MOD_ID+":textures/gui/excludifiersearch.png");
+	private static final ResourceLocation textureActive = new ResourceLocation(ModData.MOD_ID+":textures/gui/excludifieractive.png");
 	private static final ResourceLocation tabs = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
+
+	private static final ItemStack compass = new ItemStack(Items.compass);
+	private static final ItemStack excludifier = new ItemStack(ModItems.excludifier);
 
 	private final EntityPlayer player;
 	private GuiTextField textField;
 	private float currentScroll;
-	private boolean onlyActive;
+	private boolean onlyActive = true;
 
 	public GuiContainerExcludify(final EntityPlayer player) {
 		super(new ContainerExcludify(player));
 		this.player = player;
-		this.xSize = 200;
-		this.ySize = 200;
+		this.xSize = 195;
+		this.ySize = 168;
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
+		final int xStart = (this.width - this.xSize) / 2;
+		final int yStart = (this.height - this.ySize) / 2;
 		this.buttonList.clear();
-		this.textField = new GuiTextField(this.fontRendererObj, 10, 10, 60, 10);
+		this.textField = new GuiTextField(this.fontRendererObj, xStart+81, yStart+5, 88, 10);
+		this.textField.setMaxStringLength(15);
+		this.textField.setEnableBackgroundDrawing(false);
+		this.textField.setTextColor(16777215);
+		this.refreshTextfield();
+	}
+
+	private void refreshTextfield(){
+		this.focusTextfield();
+		this.clearTextfield();
+	}
+
+	private void clearTextfield(){
+		this.textField.setText("");
+	}
+
+	private void focusTextfield(){
+		this.textField.setVisible(true);
+		this.textField.setCanLoseFocus(false);
+		this.textField.setFocused(true);
+	}
+
+	private void unfocusTextfield(){
+		this.textField.setVisible(true);
+		this.textField.setCanLoseFocus(true);
+		this.textField.setFocused(false);
 	}
 
 	@Override
@@ -56,26 +92,44 @@ public class GuiContainerExcludify extends GuiContainer{
 	@Override
 	protected void handleMouseClick(final Slot p_146984_1_, final int p_146984_2_, final int p_146984_3_, final int p_146984_4_)
 	{
-
+		super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
 	}
 
 	@Override
 	protected void mouseMovedOrUp(final int mouseX, final int mouseY, final int action)
 	{
+		super.mouseMovedOrUp(mouseX, mouseY, action);
 		if (action == 0)
 		{
-			final int l = mouseX - this.guiLeft;
-			final int i1 = mouseY - this.guiTop;
+			final int xStart = (this.width - this.xSize) / 2;
+			final int yStart = (this.height - this.ySize) / 2;
+			final int x = mouseX - xStart;
+			final int y = mouseY - yStart;
+			if(x < 167 || x > 195)
+				return;
+			LogHelper.info(x+":"+y+":"+this.onlyActive);
+			final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
+			if(y < 0 && this.onlyActive){
+				LogHelper.info("deactivating");
+				this.onlyActive = false;
+				containerExcludify.addSearchSlots();
+				this.currentScroll = 0F;
+				ModData.TAB_SELECT_CHANNEL.sendToServer(new MessageTabSelect(false));
+			}else if(y > 168 && !this.onlyActive){
+				LogHelper.info("activating");
+				this.onlyActive = true;
+				containerExcludify.addActiveSlots();
+				this.currentScroll = 0F;
+				ModData.TAB_SELECT_CHANNEL.sendToServer(new MessageTabSelect(true));
+			}
 			//TODO determine click
 		}
-
-		super.mouseMovedOrUp(mouseX, mouseY, action);
 	}
 
 	private void updateCreativeSearch()
 	{
 		final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
-		containerExcludify.refreshItemList(false);
+		containerExcludify.refreshCreativeList();
 		this.updateFilteredItems(containerExcludify);
 	}
 
@@ -124,11 +178,13 @@ public class GuiContainerExcludify extends GuiContainer{
 
 		this.currentScroll = 0.0F;
 		containerExcludify.scrollTo(0.0F);
+		ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(0.0F));
 	}
 
 	private boolean needsScrollBars()
 	{
-		return ItemHandler.getItemRegistrySize() > 72; //TODO
+		final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
+		return containerExcludify.itemList.size() > containerExcludify.inventorySlots.size(); //TODO
 	}
 
 	@Override
@@ -139,7 +195,8 @@ public class GuiContainerExcludify extends GuiContainer{
 
 		if (i != 0 && this.needsScrollBars())
 		{
-			final int j = ItemHandler.getItemRegistrySize() / 9 - 5 + 1;
+			final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
+			final int j = containerExcludify.itemList.size() / 9 - 5 + 1;
 
 			if (i > 0)
 				i = 1;
@@ -155,17 +212,51 @@ public class GuiContainerExcludify extends GuiContainer{
 			if (this.currentScroll > 1.0F)
 				this.currentScroll = 1.0F;
 
-			((ContainerExcludify)this.inventorySlots).scrollTo(this.currentScroll);
+			containerExcludify.scrollTo(this.currentScroll);
+			ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(this.currentScroll));
 		}
 	}
 
 	@Override
+	protected void drawGuiContainerForegroundLayer(final int p_146979_1_, final int p_146979_2_) {
+		GL11.glEnable(GL11.GL_BLEND);
+		int lastIndex = -2;
+		for(final Object obj:this.inventorySlots.inventorySlots){
+			if(obj instanceof SlotSearch == false)
+				continue;
+			final SlotSearch slot = (SlotSearch) obj;
+			if(slot.isSelected() && slot.getHasStack()){
+				RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 0, 22, 22, 256, 256, 1F);
+				if(lastIndex == slot.slotNumber % 9 - 1 && ((SlotSearch)this.inventorySlots.getSlot(slot.slotNumber -1)).isSelected())
+					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 22, 5, 22, 256, 256, 1F);
+			}
+			lastIndex = slot.slotNumber % 9;
+		}
+		//TODO draw selected boxes
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(final float p_146976_1_, final int p_146976_2_, final int p_146976_3_) {
+		final int xStart = (this.width - this.xSize) / 2;
+		final int yStart = (this.height - this.ySize) / 2;
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 		if(this.onlyActive)
-			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, this.guiLeft+166, this.guiTop-30, 0, 2, 28, 30, 256, 256, 1F);
+			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 0, 2, 28, 30, 256, 256, 1F);
 		else
-			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, this.guiLeft+166, this.guiTop+this.ySize-1, 0, 64, 28, 38, 256, 256, 1F);
-		RenderHelper.drawTexturedRect(this.onlyActive ? GuiContainerExcludify.textureActive:GuiContainerExcludify.textureSearch, this.guiTop, this.guiLeft, 0, 0, 200, 200, this.xSize, this.ySize, 1F);
+			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+168-1, 0, 64, 28, 28, 256, 256, 1F);
+		RenderHelper.drawTexturedRect(!this.onlyActive ? GuiContainerExcludify.textureActive:GuiContainerExcludify.textureSearch, xStart, yStart, 0, 0, this.xSize, this.ySize, 256, 256, 1F);
+		if(this.onlyActive)
+			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+164, 140, 96, 28, 32, 256, 256, 1F);
+		else
+			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 140, 32, 28, 32, 256, 256, 1F);
+		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.compass, xStart+195-22, yStart-20);
+		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.excludifier, xStart+195-22, yStart+168+4);
+		this.textField.drawTextBox();
+		//LogHelper.info(this.needsScrollBars());
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 44:59, 12, 15, 256, 256, 1F);
+
 	}
 
 }

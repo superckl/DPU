@@ -5,13 +5,17 @@ import java.util.List;
 import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModTabs;
+import me.superckl.dpu.common.utlilty.StringHelper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+
+import org.lwjgl.input.Keyboard;
 
 public class ItemExcludifier extends ItemDPU{
 
@@ -28,9 +32,13 @@ public class ItemExcludifier extends ItemDPU{
 		final NBTTagList nbtList = compound.getTagList("items", NBT.TAG_COMPOUND);
 		if(nbtList.tagCount() <= 0)
 			return;
-		list.add("Currently excluding:");
-		for(int i = 0; i < nbtList.tagCount(); i++)
-			list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
+		if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+			list.add(StringHelper.build("Hold ", EnumChatFormatting.YELLOW, EnumChatFormatting.ITALIC, "Shift ",EnumChatFormatting.RESET, EnumChatFormatting.GRAY, "to see excluded items."));
+		else{
+			list.add("Currently excluding:");
+			for(int i = 0; i < nbtList.tagCount(); i++)
+				list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
+		}
 	}
 
 

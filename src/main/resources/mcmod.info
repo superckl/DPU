@@ -1,0 +1,21 @@
+[
+{
+  "modid": "DPU",
+  "name": "Don't Pick Up",
+  "description": "Adds only one item, the Excludifier!",
+  "version": "0.1-Beta",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": [
+    "superckl"
+  ],
+  "credits": "Thanks to WillThGreat for texturing!",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [
+  ]
+}
+]
