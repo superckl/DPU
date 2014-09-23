@@ -15,6 +15,8 @@ public class Config {
 
 	@Getter
 	private boolean justDelete;
+	@Getter
+	private boolean noCreativeSearch;
 
 	public static final class Category{
 
@@ -37,6 +39,7 @@ public class Config {
 	public void loadValues(){
 		try{
 			this.justDelete = this.configFile.getBoolean("Just Delete It", Category.GENERAL, false, "If true, excludifiers will just delete items that are excluded. Use this if you are noticing lag or are running a server with many players.");
+			this.noCreativeSearch = this.configFile.getBoolean("Disable Search Tab", Category.GENERAL, false, "If true, the search tab will not appear in the excludifier GUI. This cna be used if you feel it is unfair or over powered. If true, this value will be synced to the client.");
 			this.configFile.save();
 		}catch(final Exception e){
 			e.printStackTrace();
@@ -44,6 +47,10 @@ public class Config {
 			if(this.configFile.hasChanged())
 				this.configFile.save();
 		}
+	}
+
+	public void setNoSearchOverride(){
+		this.noCreativeSearch = true;
 	}
 
 	@SubscribeEvent

@@ -24,7 +24,7 @@ public class SlotDisplay extends SlotSearch{
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean onClick(final EntityPlayer player, ItemStack held) {
+	public boolean onClick(final EntityPlayer player, ItemStack held, final boolean fromSearch) {
 		final ItemStack stack = player.getHeldItem();
 		if(stack == null || stack.getItem() != ModItems.excludifier){
 			player.closeScreen();
@@ -44,11 +44,11 @@ public class SlotDisplay extends SlotSearch{
 			this.setSelectedIndex(list.tagCount());
 			list.appendTag(held.writeToNBT(new NBTTagCompound()));
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.getSelectedIndex(), true);
-			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(held, this.getSelectedIndex(), true));
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(held, this.getSelectedIndex(), true, fromSearch));
 			LogHelper.info("added");
 			return true;
 		}else
-			return super.onClick(player, held);
+			return super.onClick(player, held, fromSearch);
 	}
 
 

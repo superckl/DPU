@@ -2,8 +2,11 @@ package me.superckl.dpu.client.gui;
 
 import java.util.Iterator;
 
+import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.container.ContainerExcludify;
+import me.superckl.dpu.common.container.SlotDisplay;
 import me.superckl.dpu.common.container.SlotSearch;
+import me.superckl.dpu.common.network.MessageNoSearch;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.LogHelper;
@@ -102,11 +105,23 @@ public class GuiContainerExcludify extends GuiContainer{
 			return;
 		}
 		final SlotSearch slotS = (SlotSearch) slot;
-		if(slotS.onClick(this.player, this.player.inventory.getItemStack())){
+		if(slotS.onClick(this.player, this.player.inventory.getItemStack(), !this.onlyActive)){
 			this.currentScroll = 0F;
 			this.textField.setText("");
 		}
 		//super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
+	}
+
+	public void onNoSearchReceived(final MessageNoSearch message){
+		final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
+		if(!this.onlyActive){
+			this.onlyActive = true;
+			containerExcludify.addActiveSlots();
+			this.currentScroll = 0F;
+			this.textField.setText("");
+		}
+		if(message.getId() != -1)
+			((SlotDisplay)containerExcludify.inventorySlots.get(message.getId())).onClick(this.player, null, !this.onlyActive);
 	}
 
 	@Override
@@ -123,14 +138,12 @@ public class GuiContainerExcludify extends GuiContainer{
 				return;
 			LogHelper.info(x+":"+y+":"+this.onlyActive);
 			final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
-			if(y < 0 && this.onlyActive){
-				LogHelper.info("deactivating");
+			if(y < 0 && !DPUMod.getInstance().getConfig().isNoCreativeSearch() && this.onlyActive){
 				this.onlyActive = false;
 				containerExcludify.addSearchSlots();
 				this.currentScroll = 0F;
 				this.textField.setText("");
 			}else if(y > 168 && !this.onlyActive){
-				LogHelper.info("activating");
 				this.onlyActive = true;
 				containerExcludify.addActiveSlots();
 				this.currentScroll = 0F;
@@ -300,16 +313,17 @@ public class GuiContainerExcludify extends GuiContainer{
 		final int yStart = (this.height - this.ySize) / 2;
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
-		if(this.onlyActive)
+		if(this.onlyActive && !DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 0, 2, 28, 30, 256, 256, 1F);
-		else
+		else if(!this.onlyActive)
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+168-1, 0, 64, 28, 28, 256, 256, 1F);
 		RenderHelper.drawTexturedRect(!this.onlyActive ? GuiContainerExcludify.textureActive:GuiContainerExcludify.textureSearch, xStart, yStart, 0, 0, this.xSize, this.ySize, 256, 256, 1F);
 		if(this.onlyActive)
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+164, 140, 96, 28, 32, 256, 256, 1F);
-		else
+		else if(!DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 140, 32, 28, 32, 256, 256, 1F);
-		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.compass, xStart+195-22, yStart-20);
+		if(!DPUMod.getInstance().getConfig().isNoCreativeSearch())
+			GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.compass, xStart+195-22, yStart-20);
 		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.excludifier, xStart+195-22, yStart+168+4);
 		this.textField.drawTextBox();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

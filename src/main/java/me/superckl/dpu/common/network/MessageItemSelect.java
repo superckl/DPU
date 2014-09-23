@@ -19,6 +19,8 @@ public class MessageItemSelect implements IMessage{
 	private int selectedIndex;
 	@Getter
 	private boolean added;
+	@Getter
+	private boolean fromSearch;
 
 	public MessageItemSelect() {}
 
@@ -29,6 +31,7 @@ public class MessageItemSelect implements IMessage{
 			this.stack = buffer.readItemStackFromBuffer();
 			this.selectedIndex = buffer.readInt();
 			this.added = buffer.readBoolean();
+			this.fromSearch = buffer.readBoolean();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -41,6 +44,7 @@ public class MessageItemSelect implements IMessage{
 			buffer.writeItemStackToBuffer(this.stack);
 			buffer.writeInt(this.selectedIndex);
 			buffer.writeBoolean(this.added);
+			buffer.writeBoolean(this.fromSearch);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

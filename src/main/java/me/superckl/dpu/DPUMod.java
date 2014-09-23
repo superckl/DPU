@@ -17,11 +17,11 @@ public class DPUMod {
 
 	@Instance(ModData.MOD_ID)
 	@Getter
-	public static DPUMod instance;
+	private static DPUMod instance;
 
 	@SidedProxy(clientSide=ModData.CLIENT_PROXY, serverSide=ModData.SERVER_PROXY)
 	@Getter
-	public static IProxy proxy;
+	private static IProxy proxy;
 
 	@Getter
 	private Config config;

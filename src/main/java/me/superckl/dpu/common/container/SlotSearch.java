@@ -39,7 +39,7 @@ public class SlotSearch extends Slot{
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean onClick(final EntityPlayer player, final ItemStack held){
+	public boolean onClick(final EntityPlayer player, final ItemStack held, final boolean fromSearch){
 		LogHelper.info("Handling click");
 		final ItemStack stack = player.getHeldItem();
 		if(stack == null || stack.getItem() != ModItems.excludifier){
@@ -57,7 +57,7 @@ public class SlotSearch extends Slot{
 			list.removeTag(this.selectedIndex);
 			this.selected = false;
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, false);
-			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, false));
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, false, fromSearch));
 			this.selectedIndex = 0;
 			LogHelper.info("removed");
 		}else{
@@ -68,7 +68,7 @@ public class SlotSearch extends Slot{
 				return false;
 			list.appendTag(this.getStack().writeToNBT(new NBTTagCompound()));
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, true);
-			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, true));
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, true, fromSearch));
 			LogHelper.info("added");
 		}
 		return false;
