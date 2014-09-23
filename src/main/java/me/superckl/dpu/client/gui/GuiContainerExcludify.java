@@ -4,9 +4,6 @@ import java.util.Iterator;
 
 import me.superckl.dpu.common.container.ContainerExcludify;
 import me.superckl.dpu.common.container.SlotSearch;
-import me.superckl.dpu.common.network.MessageScrollUpdate;
-import me.superckl.dpu.common.network.MessageSearchUpdate;
-import me.superckl.dpu.common.network.MessageTabSelect;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.LogHelper;
@@ -37,6 +34,8 @@ public class GuiContainerExcludify extends GuiContainer{
 	private GuiTextField textField;
 	private float currentScroll;
 	private boolean onlyActive = true;
+	private boolean wasClicking;
+	private boolean isScrolling;
 
 	public GuiContainerExcludify(final EntityPlayer player) {
 		super(new ContainerExcludify(player));
@@ -85,31 +84,35 @@ public class GuiContainerExcludify extends GuiContainer{
 
 		if (!this.checkHotbarKeys(p_73869_2_))
 			if (this.textField.textboxKeyTyped(p_73869_1_, p_73869_2_))
-				this.updateCreativeSearch();
+				this.updateSearch();
 			else
 				super.keyTyped(p_73869_1_, p_73869_2_);
 	}
 
 	@Override
-	protected void handleMouseClick(final Slot p_146984_1_, final int p_146984_2_, final int p_146984_3_, final int p_146984_4_)
+	protected void handleMouseClick(final Slot slot, final int par2, final int par3, final int par4)
 	{
-		super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
-	}
-
-	@Override
-	protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
-		LogHelper.info("Sending to server");
-		if(this.textField.getText() != null && !this.textField.getText().isEmpty()) //TODO borked
-			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageSearchUpdate(this.textField.getText().toLowerCase(), this.onlyActive));
-		ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(this.currentScroll));
-		super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+		if(slot == null || slot instanceof SlotSearch == false){
+			if(slot != null && slot.getHasStack() && slot.getStack() == this.player.getHeldItem()){
+				this.player.closeScreen();
+				return;
+			}
+			super.handleMouseClick(slot, par2, par3, par4);
+			return;
+		}
+		final SlotSearch slotS = (SlotSearch) slot;
+		if(slotS.onClick(this.player, this.player.inventory.getItemStack())){
+			this.currentScroll = 0F;
+			this.textField.setText("");
+		}
+		//super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
 	}
 
 	@Override
 	protected void mouseMovedOrUp(final int mouseX, final int mouseY, final int action)
 	{
 		super.mouseMovedOrUp(mouseX, mouseY, action);
-		if (action == 0)
+		if (action == 0 && !this.isScrolling)
 		{
 			final int xStart = (this.width - this.xSize) / 2;
 			final int yStart = (this.height - this.ySize) / 2;
@@ -125,20 +128,18 @@ public class GuiContainerExcludify extends GuiContainer{
 				containerExcludify.addSearchSlots();
 				this.currentScroll = 0F;
 				this.textField.setText("");
-				ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageTabSelect(false));
 			}else if(y > 168 && !this.onlyActive){
 				LogHelper.info("activating");
 				this.onlyActive = true;
 				containerExcludify.addActiveSlots();
 				this.currentScroll = 0F;
 				this.textField.setText("");
-				ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageTabSelect(true));
 			}
 			//TODO determine click
 		}
 	}
 
-	private void updateCreativeSearch()
+	private void updateSearch()
 	{
 		final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
 		if(!this.onlyActive)
@@ -200,7 +201,7 @@ public class GuiContainerExcludify extends GuiContainer{
 	private boolean needsScrollBars()
 	{
 		final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
-		return containerExcludify.itemList.size() > containerExcludify.inventorySlots.size(); //TODO
+		return containerExcludify.itemList.size() > (this.onlyActive ? 27:72);
 	}
 
 	@Override
@@ -212,7 +213,7 @@ public class GuiContainerExcludify extends GuiContainer{
 		if (i != 0 && this.needsScrollBars())
 		{
 			final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
-			final int j = containerExcludify.itemList.size() / 9 - 8 + 1;
+			final int j = containerExcludify.itemList.size() / 9 - (this.onlyActive ? 3:8) + 1;
 
 			if (i > 0)
 				i = 1;
@@ -233,6 +234,42 @@ public class GuiContainerExcludify extends GuiContainer{
 		}
 	}
 
+
+
+	@Override
+	public void drawScreen(final int p_73863_1_, final int p_73863_2_, final float p_73863_3_) {
+		final boolean flag = Mouse.isButtonDown(0);
+		final int k = this.guiLeft;
+		final int l = this.guiTop;
+		final int i1 = k + 175;
+		final int j1 = l + 18;
+		final int k1 = i1 + 12;
+		final int l1 = j1 + (this.onlyActive ? 52:142);
+
+		if (!this.wasClicking && flag && p_73863_1_ >= i1 && p_73863_2_ >= j1 && p_73863_1_ < k1 && p_73863_2_ < l1)
+			this.isScrolling = this.needsScrollBars();
+
+		if (!flag)
+			this.isScrolling = false;
+
+		this.wasClicking = flag;
+
+		if (this.isScrolling)
+		{
+			this.currentScroll = (p_73863_2_ - j1 - 7.5F) / (l1 - j1 - 15.0F);
+
+			if (this.currentScroll < 0.0F)
+				this.currentScroll = 0.0F;
+
+			if (this.currentScroll > 1.0F)
+				this.currentScroll = 1.0F;
+
+			((ContainerExcludify)this.inventorySlots).scrollTo(this.currentScroll);
+		}
+
+		super.drawScreen(p_73863_1_, p_73863_2_, p_73863_3_);
+	}
+
 	@Override
 	protected void drawGuiContainerForegroundLayer(final int p_146979_1_, final int p_146979_2_) {
 		GL11.glEnable(GL11.GL_BLEND);
@@ -251,6 +288,7 @@ public class GuiContainerExcludify extends GuiContainer{
 			}
 			lastIndex = slot.slotNumber % 9;
 		}
+		GL11.glDisable(GL11.GL_BLEND);
 		if(!this.onlyActive)
 			this.fontRendererObj.drawString("Search Items", 8, shouldAdjust ? 7:9, 0x404040);
 		else{

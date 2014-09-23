@@ -7,7 +7,6 @@ import java.util.List;
 import me.superckl.dpu.ItemHandler;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,15 +19,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerExcludify extends Container{
 
 	private final EntityPlayer player;
-	private final InventoryBasic inventoryActive;
-	private final InventoryBasic inventoryCreative;
+	private InventoryBasic inventoryActive;
+	@SideOnly(Side.CLIENT)
+	private InventoryBasic inventoryCreative;
 	private InventoryBasic activeInventory;
 	private float currentScroll;
 	public List<ItemStack> itemList;
@@ -38,12 +37,11 @@ public class ContainerExcludify extends Container{
 
 	public ContainerExcludify(final EntityPlayer player){
 		this.player = player;
-		this.inventoryActive = new InventoryBasic("tmpActive", false, 27);
-		this.inventoryCreative = new InventoryBasic("tmpCreative", false, 72);
 		this.refreshActiveList();
 		this.addActiveSlots();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void refreshCreativeList(){
 		this.itemList = new ArrayList<ItemStack>();
 		final Iterator it = ItemHandler.getAllItems().iterator();
@@ -69,7 +67,10 @@ public class ContainerExcludify extends Container{
 			this.itemList.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void addSearchSlots(){
+		if(this.inventoryCreative == null)
+			this.inventoryCreative = new InventoryBasic("tmpCreative", false, 72);
 		this.clearInventory(this.inventoryCreative);
 		this.activeInventory = this.inventoryCreative;
 		this.inventorySlots.clear();
@@ -92,6 +93,8 @@ public class ContainerExcludify extends Container{
 	}
 
 	public void addActiveSlots(){
+		if(this.inventoryActive == null)
+			this.inventoryActive = new InventoryBasic("tmpActive", false, 27);
 		this.clearInventory(this.activeInventory);
 		this.activeInventory = this.inventoryActive;
 		this.inventorySlots.clear();
@@ -132,7 +135,7 @@ public class ContainerExcludify extends Container{
 		}
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
 		final List<ItemStack> items = ItemStackHelper.convert(list);
-		final int i = this.itemList.size() / 9 - 8 + 1;
+		final int i = this.itemList.size() / 9 - (this.activeInventory == this.inventoryActive ? 3:8) + 1;
 		int j = (int)(scroll * i + 0.5D);
 
 		if (j < 0)
@@ -174,7 +177,7 @@ public class ContainerExcludify extends Container{
 		}
 	}
 
-	@Override
+	/*	@Override
 	public ItemStack slotClick(final int slotIndex, final int p_75144_2_, final int p_75144_3_, final EntityPlayer player) {
 		LogHelper.info("clicked "+FMLCommonHandler.instance().getEffectiveSide());
 		if(slotIndex == -999)
@@ -188,7 +191,7 @@ public class ContainerExcludify extends Container{
 		if(slot instanceof SlotSearch == false)
 			return super.slotClick(slotIndex, p_75144_2_, p_75144_3_, player);
 		return ((SlotSearch)slot).onClick(player, player.inventory.getItemStack());
-	}
+	}*/
 
 	@Override
 	public ItemStack transferStackInSlot(final EntityPlayer p_82846_1_, final int p_82846_2_) {

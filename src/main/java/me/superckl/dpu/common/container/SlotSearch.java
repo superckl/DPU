@@ -4,6 +4,8 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.superckl.dpu.common.network.MessageItemSelect;
+import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import me.superckl.dpu.common.utlilty.LogHelper;
@@ -14,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class SlotSearch extends Slot{
 
@@ -27,30 +31,33 @@ public class SlotSearch extends Slot{
 	public SlotSearch(final IInventory inventory, final int id, final int x, final int y) {
 		super(inventory, id, x, y);
 	}
+
 	public SlotSearch(final IInventory inventory, final int id, final int x, final int y, final boolean selected, final int index) {
 		this(inventory, id, x, y);
 		this.selected = selected;
 		this.selectedIndex = index;
 	}
 
-	public ItemStack onClick(final EntityPlayer player, final ItemStack held){
+	@SideOnly(Side.CLIENT)
+	public boolean onClick(final EntityPlayer player, final ItemStack held){
+		LogHelper.info("Handling click");
 		final ItemStack stack = player.getHeldItem();
 		if(stack == null || stack.getItem() != ModItems.excludifier){
 			player.closeScreen();
-			return null;
+			return false;
 		}
 		if(!stack.hasTagCompound()){
 			stack.setTagCompound(new NBTTagCompound());
 			stack.getTagCompound().setTag("items", new NBTTagList());
 		}
 		if(!this.getHasStack())
-			return null;
+			return false;
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
 		if(this.selected){
 			list.removeTag(this.selectedIndex);
 			this.selected = false;
-			stack.getTagCompound().setTag("items", list);
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, false);
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, false));
 			this.selectedIndex = 0;
 			LogHelper.info("removed");
 		}else{
@@ -58,14 +65,14 @@ public class SlotSearch extends Slot{
 			this.selectedIndex = list.tagCount();
 			final List<ItemStack> items = ItemStackHelper.convert(list);
 			if(ItemStackHelper.contains(items, this.getStack()) != -1)
-				return null;
+				return false;
 			list.appendTag(this.getStack().writeToNBT(new NBTTagCompound()));
-			stack.getTagCompound().setTag("items", list);
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, true);
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, true));
 			LogHelper.info("added");
 		}
 		//super.onSlotChanged();
-		return null;
+		return false;
 	}
 
 	@Override

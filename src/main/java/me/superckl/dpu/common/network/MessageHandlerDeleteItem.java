@@ -23,7 +23,7 @@ public class MessageHandlerDeleteItem implements IMessageHandler<MessageDeleteIt
 	@Override
 	public IMessage onMessage(final MessageDeleteItem message, final MessageContext ctx) {
 		for(int i = 0; i < this.random.nextInt(3)+1;i++)
-			this.mc.theWorld.spawnParticle("flame", message.getX()+(this.random.nextFloat()-1)/4F, message.getY()+this.random.nextFloat()/3F, message.getZ()+(this.random.nextFloat()-1)/4F, 0D, 0D, 0D);
+			this.mc.theWorld.spawnParticle("flame", message.getX()+(this.random.nextFloat()-1)/8F, message.getY()+this.random.nextFloat()/3F, message.getZ()+(this.random.nextFloat()-1)/8F, 0D, 0D, 0D);
 		return null;
 	}
 
