@@ -36,9 +36,10 @@ public class SlotDisplay extends SlotSearch{
 			final List<ItemStack> items = ItemStackHelper.convert(list);
 			if(ItemStackHelper.contains(items, held) != -1)
 				return null;
+			this.setSelectedIndex(list.tagCount());
 			list.appendTag(held.writeToNBT(new NBTTagCompound()));
 			stack.getTagCompound().setTag("items", list);
-			((ContainerExcludify)player.openContainer).onActiveItemChange();
+			((ContainerExcludify)player.openContainer).onActiveItemChange(this.getSelectedIndex(), true);
 			LogHelper.info("added");
 			return null;
 		}else

@@ -13,6 +13,9 @@ public class Config {
 	@Getter
 	private final Configuration configFile;
 
+	@Getter
+	private boolean justDelete;
+
 	public static final class Category{
 
 		public static String GENERAL = "general";
@@ -33,7 +36,7 @@ public class Config {
 
 	public void loadValues(){
 		try{
-
+			this.justDelete = this.configFile.getBoolean("Just Delete It", Category.GENERAL, false, "If true, excludifiers will just delete items that are excluded. Use this if you are noticing lag or are running a server with many players.");
 			this.configFile.save();
 		}catch(final Exception e){
 			e.printStackTrace();

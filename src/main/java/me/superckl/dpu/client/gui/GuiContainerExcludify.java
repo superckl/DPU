@@ -5,6 +5,7 @@ import java.util.Iterator;
 import me.superckl.dpu.common.container.ContainerExcludify;
 import me.superckl.dpu.common.container.SlotSearch;
 import me.superckl.dpu.common.network.MessageScrollUpdate;
+import me.superckl.dpu.common.network.MessageSearchUpdate;
 import me.superckl.dpu.common.network.MessageTabSelect;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
@@ -96,6 +97,15 @@ public class GuiContainerExcludify extends GuiContainer{
 	}
 
 	@Override
+	protected void mouseClicked(int p_73864_1_, int p_73864_2_, int p_73864_3_) {
+		LogHelper.info("Sending to server");
+		if(this.textField.getText() != null && !this.textField.getText().isEmpty()) //TODO borked
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageSearchUpdate(this.textField.getText().toLowerCase(), this.onlyActive));
+		ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(this.currentScroll));
+		super.mouseClicked(p_73864_1_, p_73864_2_, p_73864_3_);
+	}
+
+	@Override
 	protected void mouseMovedOrUp(final int mouseX, final int mouseY, final int action)
 	{
 		super.mouseMovedOrUp(mouseX, mouseY, action);
@@ -114,13 +124,15 @@ public class GuiContainerExcludify extends GuiContainer{
 				this.onlyActive = false;
 				containerExcludify.addSearchSlots();
 				this.currentScroll = 0F;
-				ModData.TAB_SELECT_CHANNEL.sendToServer(new MessageTabSelect(false));
+				this.textField.setText("");
+				ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageTabSelect(false));
 			}else if(y > 168 && !this.onlyActive){
 				LogHelper.info("activating");
 				this.onlyActive = true;
 				containerExcludify.addActiveSlots();
 				this.currentScroll = 0F;
-				ModData.TAB_SELECT_CHANNEL.sendToServer(new MessageTabSelect(true));
+				this.textField.setText("");
+				ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageTabSelect(true));
 			}
 			//TODO determine click
 		}
@@ -129,7 +141,10 @@ public class GuiContainerExcludify extends GuiContainer{
 	private void updateCreativeSearch()
 	{
 		final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
-		containerExcludify.refreshCreativeList();
+		if(!this.onlyActive)
+			containerExcludify.refreshCreativeList();
+		else
+			containerExcludify.refreshActiveList();
 		this.updateFilteredItems(containerExcludify);
 	}
 
@@ -140,13 +155,14 @@ public class GuiContainerExcludify extends GuiContainer{
 		final Enchantment[] aenchantment = Enchantment.enchantmentsList;
 		final int j = aenchantment.length;
 
-		for (int i = 0; i < j; ++i)
-		{
-			final Enchantment enchantment = aenchantment[i];
+		if(!this.onlyActive)
+			for (int i = 0; i < j; ++i)
+			{
+				final Enchantment enchantment = aenchantment[i];
 
-			if (enchantment != null && enchantment.type != null)
-				Items.enchanted_book.func_92113_a(enchantment, containerExcludify.itemList);
-		}
+				if (enchantment != null && enchantment.type != null)
+					Items.enchanted_book.func_92113_a(enchantment, containerExcludify.itemList);
+			}
 
 		iterator = containerExcludify.itemList.iterator();
 		final String s1 = this.textField.getText().toLowerCase();
@@ -178,7 +194,7 @@ public class GuiContainerExcludify extends GuiContainer{
 
 		this.currentScroll = 0.0F;
 		containerExcludify.scrollTo(0.0F);
-		ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(0.0F));
+		//ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(0.0F));
 	}
 
 	private boolean needsScrollBars()
@@ -196,7 +212,7 @@ public class GuiContainerExcludify extends GuiContainer{
 		if (i != 0 && this.needsScrollBars())
 		{
 			final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
-			final int j = containerExcludify.itemList.size() / 9 - 5 + 1;
+			final int j = containerExcludify.itemList.size() / 9 - 8 + 1;
 
 			if (i > 0)
 				i = 1;
@@ -213,7 +229,7 @@ public class GuiContainerExcludify extends GuiContainer{
 				this.currentScroll = 1.0F;
 
 			containerExcludify.scrollTo(this.currentScroll);
-			ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(this.currentScroll));
+			//ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(this.currentScroll));
 		}
 	}
 
@@ -221,6 +237,7 @@ public class GuiContainerExcludify extends GuiContainer{
 	protected void drawGuiContainerForegroundLayer(final int p_146979_1_, final int p_146979_2_) {
 		GL11.glEnable(GL11.GL_BLEND);
 		int lastIndex = -2;
+		boolean shouldAdjust = false;
 		for(final Object obj:this.inventorySlots.inventorySlots){
 			if(obj instanceof SlotSearch == false)
 				continue;
@@ -229,10 +246,17 @@ public class GuiContainerExcludify extends GuiContainer{
 				RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 0, 22, 22, 256, 256, 1F);
 				if(lastIndex == slot.slotNumber % 9 - 1 && ((SlotSearch)this.inventorySlots.getSlot(slot.slotNumber -1)).isSelected())
 					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 22, 5, 22, 256, 256, 1F);
+				if(slot.slotNumber < 4)
+					shouldAdjust = true;
 			}
 			lastIndex = slot.slotNumber % 9;
 		}
-		//TODO draw selected boxes
+		if(!this.onlyActive)
+			this.fontRendererObj.drawString("Search Items", 8, shouldAdjust ? 7:9, 0x404040);
+		else{
+			this.fontRendererObj.drawString("Selected Items", 8, shouldAdjust ? 7:9, 0x404040);
+			this.fontRendererObj.drawString("Inventory", 8, 77, 0x404040);
+		}
 	}
 
 	@Override

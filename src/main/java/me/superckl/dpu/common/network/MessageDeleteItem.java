@@ -3,29 +3,27 @@ package me.superckl.dpu.common.network;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 @AllArgsConstructor
-public class MessageScrollUpdate implements IMessage{
+public class MessageDeleteItem implements IMessage{
 
 	@Getter
-	@Setter
-	private float scroll;
+	private double x,y,z;
 
-	public MessageScrollUpdate() {}
+	public MessageDeleteItem() {}
 
 	@Override
 	public void fromBytes(final ByteBuf buf) {
-		LogHelper.info("Reading float");
-		this.scroll = buf.readFloat();
+		this.x = buf.readDouble();
+		this.y = buf.readDouble();
+		this.z = buf.readDouble();
 	}
 
 	@Override
 	public void toBytes(final ByteBuf buf) {
-		LogHelper.info("writing "+this.scroll);
-		buf.writeFloat(this.scroll);
+		buf.writeDouble(this.x).writeDouble(this.y).writeDouble(this.z);
+
 	}
 
 }

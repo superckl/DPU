@@ -7,6 +7,8 @@ import java.util.List;
 import me.superckl.dpu.ItemHandler;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
+import me.superckl.dpu.common.utlilty.LogHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -18,6 +20,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerExcludify extends Container{
 
@@ -27,6 +32,9 @@ public class ContainerExcludify extends Container{
 	private InventoryBasic activeInventory;
 	private float currentScroll;
 	public List<ItemStack> itemList;
+
+	@SideOnly(Side.CLIENT)
+	private final Minecraft mc = Minecraft.getMinecraft();
 
 	public ContainerExcludify(final EntityPlayer player){
 		this.player = player;
@@ -124,13 +132,13 @@ public class ContainerExcludify extends Container{
 		}
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
 		final List<ItemStack> items = ItemStackHelper.convert(list);
-		final int i = this.itemList.size() / 9 - 5 + 1;
+		final int i = this.itemList.size() / 9 - 8 + 1;
 		int j = (int)(scroll * i + 0.5D);
 
 		if (j < 0)
 			j = 0;
 
-		for (int k = 0; k < Math.ceil(this.activeInventory.getSizeInventory()/9D); ++k)
+		for (int k = 0; k < (this.activeInventory == this.inventoryActive ? 3:8); ++k)
 			for (int l = 0; l < 9; ++l)
 			{
 				final int i1 = l + (k + j) * 9;
@@ -143,25 +151,39 @@ public class ContainerExcludify extends Container{
 					if((index = ItemStackHelper.contains(items, stack1)) != -1 && (slot = this.getSlot(l + k * 9)) instanceof SlotSearch){
 						((SlotSearch)slot).setSelected(true);
 						((SlotSearch)slot).setSelectedIndex(index);
-					}
-				}else
+					}else if((slot = this.getSlot(l + k * 9)) instanceof SlotSearch)
+						((SlotSearch)slot).setSelected(false);
+				} else
 					this.activeInventory.setInventorySlotContents(l + k * 9, (ItemStack)null);
 			}
 	}
 
-	public void onActiveItemChange(){
-		if(this.activeInventory != this.inventoryActive)
+	public void onActiveItemChange(final int index, final boolean added){
+		if(this.activeInventory != this.inventoryActive && !added){
+			for(final Object obj:this.inventorySlots){
+				if(obj instanceof SlotSearch == false)
+					continue;
+				final SlotSearch slot = (SlotSearch) obj;
+				if(slot.isSelected() && slot.getSelectedIndex() > index)
+					slot.setSelectedIndex(slot.getSelectedIndex()-1);
+			}
 			return;
-		this.refreshActiveList();
-		this.scrollTo(this.currentScroll);
+		}else if(this.activeInventory == this.inventoryActive){
+			this.refreshActiveList();
+			this.scrollTo(this.currentScroll);
+		}
 	}
 
 	@Override
 	public ItemStack slotClick(final int slotIndex, final int p_75144_2_, final int p_75144_3_, final EntityPlayer player) {
-		//LogHelper.info("clicked "+FMLCommonHandler.instance().getEffectiveSide());
+		LogHelper.info("clicked "+FMLCommonHandler.instance().getEffectiveSide());
 		if(slotIndex == -999)
 			return super.slotClick(slotIndex, p_75144_2_, p_75144_3_, player);
 		final Slot slot = this.getSlot(slotIndex);
+		if(!(slot instanceof SlotSearch) && slot.getStack() != null && slot.getStack().getItem() == ModItems.excludifier){
+			this.player.closeScreen();
+			return null;
+		}
 		//LogHelper.info("clicked "+slotIndex+":"+slot.getStack().getDisplayName());
 		if(slot instanceof SlotSearch == false)
 			return super.slotClick(slotIndex, p_75144_2_, p_75144_3_, player);

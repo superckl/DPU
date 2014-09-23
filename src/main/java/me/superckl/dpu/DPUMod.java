@@ -29,6 +29,7 @@ public class DPUMod {
 	@EventHandler
 	public void preInit(final FMLPreInitializationEvent e){
 		this.config = new Config(e.getSuggestedConfigurationFile());
+		this.config.loadValues();
 		ModItems.init();
 		DPUMod.proxy.registerHandlers();
 	}

@@ -49,9 +49,9 @@ public class SlotSearch extends Slot{
 		if(this.selected){
 			list.removeTag(this.selectedIndex);
 			this.selected = false;
-			this.selectedIndex = 0;
 			stack.getTagCompound().setTag("items", list);
-			((ContainerExcludify)player.openContainer).onActiveItemChange();
+			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, false);
+			this.selectedIndex = 0;
 			LogHelper.info("removed");
 		}else{
 			this.selected = true;
@@ -61,6 +61,7 @@ public class SlotSearch extends Slot{
 				return null;
 			list.appendTag(this.getStack().writeToNBT(new NBTTagCompound()));
 			stack.getTagCompound().setTag("items", list);
+			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, true);
 			LogHelper.info("added");
 		}
 		//super.onSlotChanged();

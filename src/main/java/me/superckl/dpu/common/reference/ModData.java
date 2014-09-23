@@ -11,7 +11,7 @@ public class ModData {
 	public static final String CLIENT_PROXY = "me.superckl.dpu.proxy.ClientProxy";
 	public static final String SERVER_PROXY = "me.superckl.dpu.proxy.ServerProxy";
 
-	public static SimpleNetworkWrapper TAB_SELECT_CHANNEL;
-	public static SimpleNetworkWrapper SCROLL_UPDATE_CHANNEL;
+	public static SimpleNetworkWrapper GUI_UPDATE_CHANNEL;
+	public static SimpleNetworkWrapper ITEM_DELETE_CHANNEL;
 
 }
