@@ -119,6 +119,9 @@ public class ContainerExcludify extends Container{
 		return player == this.player;
 	}
 
+	@Override
+	public void putStackInSlot(final int p_75141_1_, final ItemStack p_75141_2_) {}
+
 	public void scrollTo(final float scroll)
 	{
 		if(this.activeInventory == null)
@@ -177,26 +180,13 @@ public class ContainerExcludify extends Container{
 		}
 	}
 
-	/*	@Override
-	public ItemStack slotClick(final int slotIndex, final int p_75144_2_, final int p_75144_3_, final EntityPlayer player) {
-		LogHelper.info("clicked "+FMLCommonHandler.instance().getEffectiveSide());
-		if(slotIndex == -999)
-			return super.slotClick(slotIndex, p_75144_2_, p_75144_3_, player);
-		final Slot slot = this.getSlot(slotIndex);
-		if(!(slot instanceof SlotSearch) && slot.getStack() != null && slot.getStack().getItem() == ModItems.excludifier){
-			this.player.closeScreen();
-			return null;
-		}
-		//LogHelper.info("clicked "+slotIndex+":"+slot.getStack().getDisplayName());
-		if(slot instanceof SlotSearch == false)
-			return super.slotClick(slotIndex, p_75144_2_, p_75144_3_, player);
-		return ((SlotSearch)slot).onClick(player, player.inventory.getItemStack());
-	}*/
+	@Override
+	protected void retrySlotClick(final int p_75133_1_, final int p_75133_2_, final boolean p_75133_3_, final EntityPlayer p_75133_4_) {}
 
 	@Override
 	public ItemStack transferStackInSlot(final EntityPlayer p_82846_1_, final int p_82846_2_) {
 		// TODO
-		return super.transferStackInSlot(p_82846_1_, p_82846_2_);
+		return null;
 	}
 
 }

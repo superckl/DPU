@@ -92,6 +92,7 @@ public class GuiContainerExcludify extends GuiContainer{
 	@Override
 	protected void handleMouseClick(final Slot slot, final int par2, final int par3, final int par4)
 	{
+		LogHelper.info(slot);
 		if(slot == null || slot instanceof SlotSearch == false){
 			if(slot != null && slot.getHasStack() && slot.getStack() == this.player.getHeldItem()){
 				this.player.closeScreen();
@@ -135,7 +136,6 @@ public class GuiContainerExcludify extends GuiContainer{
 				this.currentScroll = 0F;
 				this.textField.setText("");
 			}
-			//TODO determine click
 		}
 	}
 
@@ -149,7 +149,6 @@ public class GuiContainerExcludify extends GuiContainer{
 		this.updateFilteredItems(containerExcludify);
 	}
 
-	//split from above for custom search tabs
 	private void updateFilteredItems(final ContainerExcludify containerExcludify)
 	{
 		Iterator iterator;
@@ -195,7 +194,6 @@ public class GuiContainerExcludify extends GuiContainer{
 
 		this.currentScroll = 0.0F;
 		containerExcludify.scrollTo(0.0F);
-		//ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(0.0F));
 	}
 
 	private boolean needsScrollBars()
@@ -230,7 +228,6 @@ public class GuiContainerExcludify extends GuiContainer{
 				this.currentScroll = 1.0F;
 
 			containerExcludify.scrollTo(this.currentScroll);
-			//ModData.SCROLL_UPDATE_CHANNEL.sendToServer(new MessageScrollUpdate(this.currentScroll));
 		}
 	}
 
@@ -315,7 +312,6 @@ public class GuiContainerExcludify extends GuiContainer{
 		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.compass, xStart+195-22, yStart-20);
 		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.excludifier, xStart+195-22, yStart+168+4);
 		this.textField.drawTextBox();
-		//LogHelper.info(this.needsScrollBars());
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 44:59, 12, 15, 256, 256, 1F);
 

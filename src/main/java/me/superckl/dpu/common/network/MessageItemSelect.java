@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -25,7 +24,6 @@ public class MessageItemSelect implements IMessage{
 
 	@Override
 	public void fromBytes(final ByteBuf buf) {
-		LogHelper.info("beginning read");
 		final PacketBuffer buffer = new PacketBuffer(buf);
 		try {
 			this.stack = buffer.readItemStackFromBuffer();
@@ -34,12 +32,10 @@ public class MessageItemSelect implements IMessage{
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-		LogHelper.info("finishing read");
 	}
 
 	@Override
 	public void toBytes(final ByteBuf buf) {
-		LogHelper.info("Beginning write");
 		final PacketBuffer buffer = new PacketBuffer(buf);
 		try {
 			buffer.writeItemStackToBuffer(this.stack);
@@ -48,7 +44,6 @@ public class MessageItemSelect implements IMessage{
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-		LogHelper.info("Finishing write");
 	}
 
 }

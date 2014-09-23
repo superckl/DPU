@@ -71,7 +71,6 @@ public class SlotSearch extends Slot{
 			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, true));
 			LogHelper.info("added");
 		}
-		//super.onSlotChanged();
 		return false;
 	}
 
@@ -79,10 +78,5 @@ public class SlotSearch extends Slot{
 	public boolean isItemValid(final ItemStack p_75214_1_) {
 		return false;
 	}
-
-	/*@Override
-	public boolean canTakeStack(EntityPlayer p_82869_1_) {
-		return false;
-	}*/
 
 }

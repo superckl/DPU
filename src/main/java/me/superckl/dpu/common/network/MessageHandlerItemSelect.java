@@ -1,7 +1,6 @@
 package me.superckl.dpu.common.network;
 
 import me.superckl.dpu.common.reference.ModItems;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,8 +14,6 @@ public class MessageHandlerItemSelect implements IMessageHandler<MessageItemSele
 
 	@Override
 	public IMessage onMessage(final MessageItemSelect message, final MessageContext ctx) {
-		LogHelper.info("handling message");
-
 		final EntityPlayer player = ctx.getServerHandler().playerEntity;
 		final ItemStack stack = player.getHeldItem();
 		if(stack == null || stack.getItem() != ModItems.excludifier){
@@ -30,11 +27,8 @@ public class MessageHandlerItemSelect implements IMessageHandler<MessageItemSele
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
 		if(message.isAdded())
 			list.appendTag(message.getStack().writeToNBT(new NBTTagCompound()));
-		//((ContainerExcludify)player.openContainer).onActiveItemChange(message.getSelectedIndex(), true);
 		else
 			list.removeTag(message.getSelectedIndex());
-		//((ContainerExcludify)player.openContainer).onActiveItemChange(message.getSelectedIndex(), false);
-		LogHelper.info("finished handling");
 		return null;
 	}
 
