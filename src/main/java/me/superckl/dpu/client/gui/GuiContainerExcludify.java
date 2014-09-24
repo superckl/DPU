@@ -9,7 +9,6 @@ import me.superckl.dpu.common.container.SlotSearch;
 import me.superckl.dpu.common.network.MessageNoSearch;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import me.superckl.dpu.common.utlilty.RenderHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -23,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 public class GuiContainerExcludify extends GuiContainer{
 
@@ -53,7 +53,7 @@ public class GuiContainerExcludify extends GuiContainer{
 		final int xStart = (this.width - this.xSize) / 2;
 		final int yStart = (this.height - this.ySize) / 2;
 		this.buttonList.clear();
-		this.textField = new GuiTextField(this.fontRendererObj, xStart+81, yStart+5, 88, 10);
+		this.textField = new GuiTextField(this.fontRendererObj, xStart+82, yStart+6, 87, 9);
 		this.textField.setMaxStringLength(15);
 		this.textField.setEnableBackgroundDrawing(false);
 		this.textField.setTextColor(16777215);
@@ -95,7 +95,6 @@ public class GuiContainerExcludify extends GuiContainer{
 	@Override
 	protected void handleMouseClick(final Slot slot, final int par2, final int par3, final int par4)
 	{
-		LogHelper.info(slot);
 		if(slot == null || slot instanceof SlotSearch == false){
 			if(slot != null && slot.getHasStack() && slot.getStack() == this.player.getHeldItem()){
 				this.player.closeScreen();
@@ -136,7 +135,6 @@ public class GuiContainerExcludify extends GuiContainer{
 			final int y = mouseY - yStart;
 			if(x < 167 || x > 195)
 				return;
-			LogHelper.info(x+":"+y+":"+this.onlyActive);
 			final ContainerExcludify containerExcludify = (ContainerExcludify) this.inventorySlots;
 			if(y < 0 && !DPUMod.getInstance().getConfig().isNoCreativeSearch() && this.onlyActive){
 				this.onlyActive = false;
@@ -284,7 +282,6 @@ public class GuiContainerExcludify extends GuiContainer{
 	protected void drawGuiContainerForegroundLayer(final int p_146979_1_, final int p_146979_2_) {
 		GL11.glEnable(GL11.GL_BLEND);
 		int lastIndex = -2;
-		boolean shouldAdjust = false;
 		for(final Object obj:this.inventorySlots.inventorySlots){
 			if(obj instanceof SlotSearch == false)
 				continue;
@@ -293,16 +290,16 @@ public class GuiContainerExcludify extends GuiContainer{
 				RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 0, 22, 22, 256, 256, 1F);
 				if(lastIndex == slot.slotNumber % 9 - 1 && ((SlotSearch)this.inventorySlots.getSlot(slot.slotNumber -1)).isSelected())
 					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 22, 5, 22, 256, 256, 1F);
-				if(slot.slotNumber < 4)
-					shouldAdjust = true;
+				if(slot.slotNumber-9 >= 0 && ((SlotSearch)this.inventorySlots.inventorySlots.get(slot.slotNumber-9)).isSelected())
+					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-2, slot.yDisplayPosition-3, 1000, 195, 44, 20, 4, 256, 256, 1F);
 			}
 			lastIndex = slot.slotNumber % 9;
 		}
 		GL11.glDisable(GL11.GL_BLEND);
 		if(!this.onlyActive)
-			this.fontRendererObj.drawString("Search Items", 8, shouldAdjust ? 7:9, 0x404040);
+			this.fontRendererObj.drawString("Search Items", 8, 6, 0x404040);
 		else{
-			this.fontRendererObj.drawString("Selected Items", 8, shouldAdjust ? 7:9, 0x404040);
+			this.fontRendererObj.drawString("Selected Items", 6, 6, 0x404040);
 			this.fontRendererObj.drawString("Inventory", 8, 77, 0x404040);
 		}
 	}
@@ -317,17 +314,21 @@ public class GuiContainerExcludify extends GuiContainer{
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 0, 2, 28, 30, 256, 256, 1F);
 		else if(!this.onlyActive)
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+168-1, 0, 64, 28, 28, 256, 256, 1F);
-		RenderHelper.drawTexturedRect(!this.onlyActive ? GuiContainerExcludify.textureActive:GuiContainerExcludify.textureSearch, xStart, yStart, 0, 0, this.xSize, this.ySize, 256, 256, 1F);
+		RenderHelper.drawTexturedRect(this.onlyActive ? GuiContainerExcludify.textureActive:GuiContainerExcludify.textureSearch, xStart, yStart, 0, 0, this.xSize, this.ySize, 256, 256, 1F);
 		if(this.onlyActive)
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+164, 140, 96, 28, 32, 256, 256, 1F);
 		else if(!DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 140, 32, 28, 32, 256, 256, 1F);
+		GL11.glColor3f(1F, 1F, 1F);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		if(!DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.compass, xStart+195-22, yStart-20);
 		GuiScreen.itemRender.renderItemAndEffectIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), GuiContainerExcludify.excludifier, xStart+195-22, yStart+168+4);
+		GL11.glDisable(GL11.GL_LIGHTING);
 		this.textField.drawTextBox();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 44:59, 12, 15, 256, 256, 1F);
+		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 48:63, 12, 15, 256, 256, 1F);
 
 	}
 

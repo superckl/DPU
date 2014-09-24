@@ -25,20 +25,23 @@ public class ItemExcludifier extends ItemDPU{
 
 	@Override
 	public void addInformation(final ItemStack stack, final EntityPlayer player, final List list, final boolean par4) {
-		list.add("Right click to exclude items.");
+		list.add("Click to exclude items from pickup");
 		if(!stack.hasTagCompound())
 			return;
 		final NBTTagCompound compound = stack.getTagCompound();
 		final NBTTagList nbtList = compound.getTagList("items", NBT.TAG_COMPOUND);
 		if(nbtList.tagCount() <= 0)
 			return;
-		if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-			list.add(StringHelper.build("Hold ", EnumChatFormatting.YELLOW, EnumChatFormatting.ITALIC, "Shift ",EnumChatFormatting.RESET, EnumChatFormatting.GRAY, "to see excluded items."));
-		else{
-			list.add("Currently excluding:");
-			for(int i = 0; i < nbtList.tagCount(); i++)
-				list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
-		}
+		list.add("");
+		list.add("Currently excluding:");
+		for(int i = 0; i < nbtList.tagCount() && i < 3; i++)
+			list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
+		if(nbtList.tagCount() > 3)
+			if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+				list.add(StringHelper.build("Hold ", EnumChatFormatting.ITALIC, "Shift ",EnumChatFormatting.RESET, EnumChatFormatting.GRAY, "for more..."));
+			else
+				for(int i = 3; i < nbtList.tagCount(); i++)
+					list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
 	}
 
 

@@ -28,11 +28,8 @@ public class EntityHandler {
 						e.setCanceled(true);
 						if(DPUMod.getInstance().getConfig().isJustDelete()){
 							e.item.setDead();
-							//LogHelper.info(FMLCommonHandler.instance().getEffectiveSide()+": spawning flame at "+e.item.posX+":"+e.item.posY+":"+e.item.posZ);
 							ModData.ITEM_DELETE_CHANNEL.sendToAllAround(new MessageDeleteItem(e.item.posX, e.item.posY, e.item.posZ), new TargetPoint(e.entityPlayer.dimension, e.item.posX, e.item.posY, e.item.posZ, 20D));
-							//e.entityPlayer.worldObj.spawnParticle("flame", e.item.posX, e.item.posY, e.item.posZ, 0D, 0D, 0D);
 						}
-						//LogHelper.info("denied pickup of "+item.getDisplayName());
 						return;
 					}
 			}

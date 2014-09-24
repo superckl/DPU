@@ -6,7 +6,6 @@ import me.superckl.dpu.common.network.MessageItemSelect;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -45,7 +44,6 @@ public class SlotDisplay extends SlotSearch{
 			list.appendTag(held.writeToNBT(new NBTTagCompound()));
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.getSelectedIndex(), true);
 			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(held, this.getSelectedIndex(), true, fromSearch));
-			LogHelper.info("added");
 			return true;
 		}else
 			return super.onClick(player, held, fromSearch);

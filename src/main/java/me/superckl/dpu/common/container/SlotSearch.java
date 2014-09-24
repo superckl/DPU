@@ -8,7 +8,6 @@ import me.superckl.dpu.common.network.MessageItemSelect;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
-import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -40,7 +39,6 @@ public class SlotSearch extends Slot{
 
 	@SideOnly(Side.CLIENT)
 	public boolean onClick(final EntityPlayer player, final ItemStack held, final boolean fromSearch){
-		LogHelper.info("Handling click");
 		final ItemStack stack = player.getHeldItem();
 		if(stack == null || stack.getItem() != ModItems.excludifier){
 			player.closeScreen();
@@ -59,7 +57,6 @@ public class SlotSearch extends Slot{
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, false);
 			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, false, fromSearch));
 			this.selectedIndex = 0;
-			LogHelper.info("removed");
 		}else{
 			this.selected = true;
 			this.selectedIndex = list.tagCount();
@@ -69,7 +66,6 @@ public class SlotSearch extends Slot{
 			list.appendTag(this.getStack().writeToNBT(new NBTTagCompound()));
 			((ContainerExcludify)player.openContainer).onActiveItemChange(this.selectedIndex, true);
 			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(this.getStack(), this.selectedIndex, true, fromSearch));
-			LogHelper.info("added");
 		}
 		return false;
 	}
