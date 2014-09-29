@@ -328,7 +328,7 @@ public class GuiContainerExcludify extends GuiContainer{
 		GL11.glDisable(GL11.GL_LIGHTING);
 		this.textField.drawTextBox();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 48:63, 12, 15, 256, 256, 1F);
+		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 55:70, 12, 15, 256, 256, 1F);
 
 	}
 
