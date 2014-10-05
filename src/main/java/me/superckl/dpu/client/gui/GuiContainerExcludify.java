@@ -288,10 +288,20 @@ public class GuiContainerExcludify extends GuiContainer{
 			final SlotSearch slot = (SlotSearch) obj;
 			if(slot.isSelected() && slot.getHasStack()){
 				RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 0, 22, 22, 256, 256, 1F);
-				if(lastIndex == slot.slotNumber % 9 - 1 && ((SlotSearch)this.inventorySlots.getSlot(slot.slotNumber -1)).isSelected())
+				SlotSearch s;
+				final boolean left = slot.slotNumber % 9 != 0 && (s = (SlotSearch)this.inventorySlots.getSlot(slot.slotNumber - 1)).isSelected() && s.getHasStack();
+				final boolean right = slot.slotNumber % 9 != 8  && (s = (SlotSearch)this.inventorySlots.getSlot(slot.slotNumber + 1)).isSelected() && s.getHasStack();
+				final boolean top = slot.slotNumber-9 >= 0 && (s = (SlotSearch)this.inventorySlots.inventorySlots.get(slot.slotNumber-9)).isSelected() && s.getHasStack();
+				final boolean topLeft = slot.slotNumber-9 >= 0 && slot.slotNumber % 9 != 0 && (s = (SlotSearch)this.inventorySlots.inventorySlots.get(slot.slotNumber-10)).isSelected() && s.getHasStack();
+				final boolean topRight = slot.slotNumber-9 >= 0 && slot.slotNumber % 9 != 8 && (s = (SlotSearch)this.inventorySlots.inventorySlots.get(slot.slotNumber-8)).isSelected() && s.getHasStack();
+				if(left)
 					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 22, 5, 22, 256, 256, 1F);
-				if(slot.slotNumber-9 >= 0 && ((SlotSearch)this.inventorySlots.inventorySlots.get(slot.slotNumber-9)).isSelected())
+				if(top)
 					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-2, slot.yDisplayPosition-3, 1000, 195, 44, 20, 4, 256, 256, 1F);
+				if(!left && topLeft)
+					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 52, 4, 4, 256, 256, 1F);
+				if(!right && topRight)
+					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition+15, slot.yDisplayPosition-3, 1000, 195, 48, 5, 4, 256, 256, 1F);
 			}
 			lastIndex = slot.slotNumber % 9;
 		}
@@ -299,8 +309,8 @@ public class GuiContainerExcludify extends GuiContainer{
 		if(!this.onlyActive)
 			this.fontRendererObj.drawString("Search Items", 8, 6, 0x404040);
 		else{
-			this.fontRendererObj.drawString("Selected Items", 6, 6, 0x404040);
-			this.fontRendererObj.drawString("Inventory", 8, 77, 0x404040);
+			this.fontRendererObj.drawString("Selected Items", 8, 6, 0x404040);
+			this.fontRendererObj.drawString("Inventory", 8, 74, 0x404040);
 		}
 	}
 
@@ -308,8 +318,6 @@ public class GuiContainerExcludify extends GuiContainer{
 	protected void drawGuiContainerBackgroundLayer(final float p_146976_1_, final int p_146976_2_, final int p_146976_3_) {
 		final int xStart = (this.width - this.xSize) / 2;
 		final int yStart = (this.height - this.ySize) / 2;
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 		if(this.onlyActive && !DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 0, 2, 28, 30, 256, 256, 1F);
 		else if(!this.onlyActive)
@@ -319,6 +327,8 @@ public class GuiContainerExcludify extends GuiContainer{
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+164, 140, 96, 28, 32, 256, 256, 1F);
 		else if(!DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 140, 32, 28, 32, 256, 256, 1F);
+		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 		GL11.glColor3f(1F, 1F, 1F);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -328,7 +338,7 @@ public class GuiContainerExcludify extends GuiContainer{
 		GL11.glDisable(GL11.GL_LIGHTING);
 		this.textField.drawTextBox();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 55:70, 12, 15, 256, 256, 1F);
+		RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, xStart+175, yStart+18+this.currentScroll*((this.onlyActive ? 52:142)-15), 195, this.needsScrollBars() ? 56:71, 12, 15, 256, 256, 1F);
 
 	}
 
