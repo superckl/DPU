@@ -3,6 +3,7 @@ package me.superckl.dpu;
 import lombok.Getter;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
+import me.superckl.dpu.common.utlilty.LogHelper;
 import me.superckl.dpu.proxy.IProxy;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -28,6 +29,7 @@ public class DPUMod {
 
 	@EventHandler
 	public void preInit(final FMLPreInitializationEvent e){
+		LogHelper.info("Please note, you are running a beta version! Please report any bugs you find.");
 		this.config = new Config(e.getSuggestedConfigurationFile());
 		this.config.loadValues();
 		ModItems.init();
@@ -42,6 +44,7 @@ public class DPUMod {
 	@EventHandler
 	public void postInit(final FMLPostInitializationEvent e){
 		ItemHandler.countItems();
+		LogHelper.info("Successfully enabled!");
 	}
 
 }

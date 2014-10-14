@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.1-Beta"
+version = "0.1.${System.env.BUILD_NUMBER}-Beta"
 group= "me.superckl.dpu"
 archivesBaseName = "DPU"
 
