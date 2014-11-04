@@ -1,0 +1,5 @@
+dpu.configgui.ctgy.general.tooltip=配置DPU基本元素
+item.dpu:excludifier.name=排除器
+gui.dpu:config.name=DPU配置设定
+gui.dpu:config_general.name=DPU基本配置
+gui.dpu:excludify.name=排除器
