@@ -13,5 +13,6 @@ public class ModData {
 
 	public static SimpleNetworkWrapper GUI_UPDATE_CHANNEL;
 	public static SimpleNetworkWrapper ITEM_DELETE_CHANNEL;
+	public static SimpleNetworkWrapper CONFIG_SYNC_CHANNEL;
 
 }

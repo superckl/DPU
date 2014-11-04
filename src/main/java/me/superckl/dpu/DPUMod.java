@@ -37,9 +37,7 @@ public class DPUMod {
 	}
 
 	@EventHandler
-	public void init(final FMLInitializationEvent e){
-
-	}
+	public void init(final FMLInitializationEvent e){}
 
 	@EventHandler
 	public void postInit(final FMLPostInitializationEvent e){

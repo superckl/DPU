@@ -4,6 +4,7 @@ import java.io.File;
 
 import lombok.Getter;
 import me.superckl.dpu.common.reference.ModData;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -57,6 +58,20 @@ public class Config {
 	public void onConfigChange(final OnConfigChangedEvent e){
 		if(e.modID.equals(ModData.MOD_ID))
 			this.loadValues();
+	}
+
+	public NBTTagCompound serialize(){
+		final NBTTagCompound tag = new NBTTagCompound();
+		tag.setBoolean("justDelete", this.justDelete);
+		tag.setBoolean("noCreativeSearch", this.noCreativeSearch);
+		return tag;
+	}
+
+	public void deserialize(final NBTTagCompound tag){
+		if(tag.hasKey("justDelete"))
+			this.justDelete = tag.getBoolean("justDelete");
+		if(tag.hasKey("noCreativeSearch"))
+			this.noCreativeSearch = tag.getBoolean("noCreativeSearch");
 	}
 
 }
