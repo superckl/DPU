@@ -48,7 +48,7 @@ public class ItemExcludifier extends ItemDPU{
 
 	@Override
 	public ItemStack onItemRightClick(final ItemStack stack, final World world, final EntityPlayer player) {
-		if(!player.isSneaking())
+		if(!player.isSneaking() && world.isRemote)
 			player.openGui(DPUMod.getInstance(), 0, world, player.serverPosX, player.serverPosY, player.serverPosZ);
 		return stack;
 	}

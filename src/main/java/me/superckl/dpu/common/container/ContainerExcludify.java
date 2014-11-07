@@ -157,6 +157,8 @@ public class ContainerExcludify extends Container{
 					if((index = ItemStackHelper.contains(items, stack1)) != -1 && (slot = this.getSlot(l + k * 9)) instanceof SlotSearch){
 						((SlotSearch)slot).setSelected(true);
 						((SlotSearch)slot).setSelectedIndex(index);
+						((SlotSearch)slot).setDelete(list.getCompoundTagAt(index).getBoolean("dpuDelete"));
+						//stack.getTagCompound().setTag("items", list);
 					}else if((slot = this.getSlot(l + k * 9)) instanceof SlotSearch)
 						((SlotSearch)slot).setSelected(false);
 				} else

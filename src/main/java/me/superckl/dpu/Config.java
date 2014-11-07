@@ -15,7 +15,7 @@ public class Config {
 	private final Configuration configFile;
 
 	@Getter
-	private boolean justDelete;
+	private boolean allowDelete;
 	@Getter
 	private boolean noCreativeSearch;
 	@Getter
@@ -41,7 +41,7 @@ public class Config {
 
 	public void loadValues(){
 		try{
-			this.justDelete = this.configFile.getBoolean("Just Delete It", Category.GENERAL, false, "If true, excludifiers will just delete items that are excluded. Use this if you are noticing lag or are running a server with many players.");
+			this.allowDelete = this.configFile.getBoolean("Allow Deletions", Category.GENERAL, true, "If true, excludifiers players will be able to set excludifiers to delete certain items.");
 			this.noCreativeSearch = this.configFile.getBoolean("Disable Search Tab", Category.GENERAL, false, "If true, the search tab will not appear in the excludifier GUI. This cna be used if you feel it is unfair or over powered. If true, this value will be synced to the client.");
 			this.easyRecipe = this.configFile.getBoolean("Easy Recipe", Category.GENERAL, false, "If true, DPU will use an easier version of the recipe to allow the excludifier to be obtained early-game.");
 			this.configFile.save();
@@ -65,14 +65,14 @@ public class Config {
 
 	public NBTTagCompound serialize(){
 		final NBTTagCompound tag = new NBTTagCompound();
-		tag.setBoolean("justDelete", this.justDelete);
+		tag.setBoolean("allowDelete", this.allowDelete);
 		tag.setBoolean("noCreativeSearch", this.noCreativeSearch);
 		return tag;
 	}
 
 	public void deserialize(final NBTTagCompound tag){
-		if(tag.hasKey("justDelete"))
-			this.justDelete = tag.getBoolean("justDelete");
+		if(tag.hasKey("allowDelete"))
+			this.allowDelete = tag.getBoolean("allowDelete");
 		if(tag.hasKey("noCreativeSearch"))
 			this.noCreativeSearch = tag.getBoolean("noCreativeSearch");
 	}

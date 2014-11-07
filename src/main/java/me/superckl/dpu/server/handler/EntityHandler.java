@@ -1,4 +1,4 @@
-package me.superckl.dpu.common.handler;
+package me.superckl.dpu.server.handler;
 
 import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.network.MessageDeleteItem;
@@ -23,15 +23,17 @@ public class EntityHandler {
 			if(stack != null && stack.getItem() == ModItems.excludifier && stack.hasTagCompound()){
 				final NBTTagCompound comp = stack.getTagCompound();
 				final NBTTagList list = comp.getTagList("items", NBT.TAG_COMPOUND);
-				for(int i = 0; i < list.tagCount(); i++)
-					if(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)).isItemEqual(item)){
+				for(int i = 0; i < list.tagCount(); i++){
+					final ItemStack dpuStack = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
+					if(dpuStack.isItemEqual(item)){
 						e.setCanceled(true);
-						if(DPUMod.getInstance().getConfig().isJustDelete()){
+						if(DPUMod.getInstance().getConfig().isAllowDelete() && list.getCompoundTagAt(i).getBoolean("dpuDelete")){
 							e.item.setDead();
 							ModData.ITEM_DELETE_CHANNEL.sendToAllAround(new MessageDeleteItem(e.item.posX, e.item.posY, e.item.posZ), new TargetPoint(e.entityPlayer.dimension, e.item.posX, e.item.posY, e.item.posZ, 20D));
 						}
 						return;
 					}
+				}
 			}
 	}
 

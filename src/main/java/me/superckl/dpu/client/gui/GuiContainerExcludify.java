@@ -104,7 +104,7 @@ public class GuiContainerExcludify extends GuiContainer{
 			return;
 		}
 		final SlotSearch slotS = (SlotSearch) slot;
-		if(slotS.onClick(this.player, this.player.inventory.getItemStack(), !this.onlyActive)){
+		if(slotS.onClick(this.player, this.player.inventory.getItemStack(), !this.onlyActive, par3 == 0)){
 			this.currentScroll = 0F;
 			this.textField.setText("");
 		}
@@ -120,7 +120,7 @@ public class GuiContainerExcludify extends GuiContainer{
 			this.textField.setText("");
 		}
 		if(message.getId() != -1)
-			((SlotDisplay)containerExcludify.inventorySlots.get(message.getId())).onClick(this.player, null, !this.onlyActive);
+			((SlotDisplay)containerExcludify.inventorySlots.get(message.getId())).onClick(this.player, null, !this.onlyActive, true);
 	}
 
 	@Override
@@ -140,11 +140,13 @@ public class GuiContainerExcludify extends GuiContainer{
 				this.onlyActive = false;
 				containerExcludify.addSearchSlots();
 				this.currentScroll = 0F;
+				containerExcludify.scrollTo(0F);
 				this.textField.setText("");
 			}else if(y > 168 && !this.onlyActive){
 				this.onlyActive = true;
 				containerExcludify.addActiveSlots();
 				this.currentScroll = 0F;
+				containerExcludify.scrollTo(0F);
 				this.textField.setText("");
 			}
 		}
@@ -302,6 +304,18 @@ public class GuiContainerExcludify extends GuiContainer{
 					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition-3, slot.yDisplayPosition-3, 1000, 195, 52, 4, 4, 256, 256, 1F);
 				if(!right && topRight)
 					RenderHelper.drawTexturedRect(GuiContainerExcludify.textureActive, slot.xDisplayPosition+15, slot.yDisplayPosition-3, 1000, 195, 48, 5, 4, 256, 256, 1F);
+				if(slot.isDelete()){
+					GL11.glDisable(GL11.GL_BLEND);
+					GL11.glDisable(GL11.GL_DEPTH_TEST);
+					this.zLevel = 300F;
+					GuiScreen.itemRender.zLevel = 300F;
+					this.fontRendererObj.drawString("x", slot.xDisplayPosition+10, slot.yDisplayPosition+8, 0xFF0000);
+					GuiScreen.itemRender.zLevel = 0F;
+					this.zLevel = 0F;
+					GL11.glEnable(GL11.GL_DEPTH_TEST);
+					GL11.glEnable(GL11.GL_BLEND);
+					GL11.glColor3f(1F, 1F, 1F);
+				}
 			}
 			lastIndex = slot.slotNumber % 9;
 		}

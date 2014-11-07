@@ -27,9 +27,11 @@ public class MessageHandlerItemSelect implements IMessageHandler<MessageItemSele
 		if(message.isFromSearch() && DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			return new MessageNoSearch(message.getSelectedIndex());
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
-		if(message.isAdded())
+		if(message.isAdded()){
 			list.appendTag(message.getStack().writeToNBT(new NBTTagCompound()));
-		else
+			if(message.getStack().hasTagCompound() && message.getStack().getTagCompound().getBoolean("dpuDelete"))
+				list.getCompoundTagAt(list.tagCount()-1).setBoolean("dpuDelete", true);
+		}else
 			list.removeTag(message.getSelectedIndex());
 		return null;
 	}

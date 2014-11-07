@@ -23,7 +23,7 @@ public class SlotDisplay extends SlotSearch{
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean onClick(final EntityPlayer player, ItemStack held, final boolean fromSearch) {
+	public boolean onClick(final EntityPlayer player, ItemStack held, final boolean fromSearch, final boolean leftClick) {
 		final ItemStack stack = player.getHeldItem();
 		if(stack == null || stack.getItem() != ModItems.excludifier){
 			player.closeScreen();
@@ -46,7 +46,7 @@ public class SlotDisplay extends SlotSearch{
 			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(held, this.getSelectedIndex(), true, fromSearch));
 			return true;
 		}else
-			return super.onClick(player, held, fromSearch);
+			return super.onClick(player, held, fromSearch, leftClick);
 	}
 
 
