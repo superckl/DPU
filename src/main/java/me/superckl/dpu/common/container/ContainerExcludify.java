@@ -7,7 +7,6 @@ import java.util.List;
 import me.superckl.dpu.ItemHandler;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -31,9 +30,6 @@ public class ContainerExcludify extends Container{
 	private InventoryBasic activeInventory;
 	private float currentScroll;
 	public List<ItemStack> itemList;
-
-	@SideOnly(Side.CLIENT)
-	private final Minecraft mc = Minecraft.getMinecraft();
 
 	public ContainerExcludify(final EntityPlayer player){
 		this.player = player;

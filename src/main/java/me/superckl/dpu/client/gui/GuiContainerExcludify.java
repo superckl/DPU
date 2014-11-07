@@ -323,7 +323,7 @@ public class GuiContainerExcludify extends GuiContainer{
 		if(!this.onlyActive)
 			this.fontRendererObj.drawString("Search Items", 8, 6, 0x404040);
 		else{
-			this.fontRendererObj.drawString("Selected Items", 8, 6, 0x404040);
+			this.fontRendererObj.drawString("Selected Items", 7, 6, 0x404040);
 			this.fontRendererObj.drawString("Inventory", 8, 74, 0x404040);
 		}
 	}
