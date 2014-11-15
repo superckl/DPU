@@ -28,7 +28,7 @@ minecraft {
 
 dependencies {
     
-    compile "org.projectlombok:lombok:1.14.4"
+    compile "org.projectlombok:lombok:1.14.8"
     
 }
 
