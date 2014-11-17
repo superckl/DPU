@@ -24,12 +24,9 @@ public abstract class CommonProxy implements IProxy{
 		NetworkRegistry.INSTANCE.registerGuiHandler(DPUMod.getInstance(), new GuiHandler());
 		ModData.GUI_UPDATE_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModData.MOD_ID+":guiUpdate");
 		ModData.GUI_UPDATE_CHANNEL.registerMessage(MessageHandlerItemSelect.class, MessageItemSelect.class, 1, Side.SERVER);
-		//ModData.GUI_UPDATE_CHANNEL.registerMessage(MessageHandlerNoSearch.class, MessageNoSearch.class, 1, Side.CLIENT);
 		ModData.GUI_UPDATE_CHANNEL.registerMessage(MessageHandlerDeleteItemUpdate.class, MessageDeleteItemUpdate.class, 2, Side.SERVER);
 		ModData.ITEM_DELETE_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModData.MOD_ID+":itemDelete");
-		//ModData.ITEM_DELETE_CHANNEL.registerMessage(MessageHandlerDeleteItem.class, MessageDeleteItem.class, 0, Side.CLIENT);
 		ModData.CONFIG_SYNC_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModData.MOD_ID+":configSync");
-		//ModData.CONFIG_SYNC_CHANNEL.registerMessage(MessageHandlerConfigSync.class, MessageConfigSync.class, 0, Side.CLIENT);
 	}
 
 }

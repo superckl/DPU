@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -15,7 +16,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 public class MessageConfigSync implements IMessage{
 
 	@Getter
-	@Setter
+	@Setter(onParam = @_(@NonNull))
 	private NBTTagCompound tag;
 
 	public MessageConfigSync() {}

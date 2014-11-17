@@ -1,6 +1,7 @@
 package me.superckl.dpu.common.network;
 
-import me.superckl.dpu.common.reference.ModItems;
+import lombok.experimental.ExtensionMethod;
+import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -10,6 +11,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 
 //TODO return no delete message
+@ExtensionMethod(ItemStackHelper.class)
 public class MessageHandlerDeleteItemUpdate implements IMessageHandler<MessageDeleteItemUpdate, IMessage>{
 
 	@Override
@@ -17,7 +19,7 @@ public class MessageHandlerDeleteItemUpdate implements IMessageHandler<MessageDe
 			final MessageContext ctx) {
 		final EntityPlayer player = ctx.getServerHandler().playerEntity;
 		final ItemStack stack = player.getHeldItem();
-		if(stack == null || stack.getItem() != ModItems.excludifier){
+		if(!stack.ensureExcludeNBT()){
 			player.closeScreen();
 			return null;
 		}

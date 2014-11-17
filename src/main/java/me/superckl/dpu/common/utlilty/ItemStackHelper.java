@@ -3,7 +3,9 @@ package me.superckl.dpu.common.utlilty;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.superckl.dpu.common.reference.ModItems;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 public class ItemStackHelper {
@@ -24,6 +26,22 @@ public class ItemStackHelper {
 		for(int i = 0; i < list.tagCount(); i++)
 			items.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
 		return items;
+	}
+
+	public static boolean ensureExcludeNBT(final ItemStack stack){
+		try {
+			if(stack == null || stack.getItem() != ModItems.excludifier)
+				return false;
+			if(!stack.hasTagCompound()){
+				stack.setTagCompound(new NBTTagCompound());
+				stack.getTagCompound().setTag("items", new NBTTagList());
+			}
+		}catch (final Exception e) {
+			LogHelper.info("Failed to check item NBT!");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

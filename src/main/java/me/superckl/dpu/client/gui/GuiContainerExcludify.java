@@ -108,7 +108,6 @@ public class GuiContainerExcludify extends GuiContainer{
 			this.currentScroll = 0F;
 			this.textField.setText("");
 		}
-		//super.handleMouseClick(p_146984_1_, p_146984_2_, p_146984_3_, p_146984_4_);
 	}
 
 	public void onNoSearchReceived(final MessageNoSearch message){
@@ -341,7 +340,6 @@ public class GuiContainerExcludify extends GuiContainer{
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart+164, 140, 96, 28, 32, 256, 256, 1F);
 		else if(!DPUMod.getInstance().getConfig().isNoCreativeSearch())
 			RenderHelper.drawTexturedRect(GuiContainerExcludify.tabs, xStart+195-28, yStart-28, 140, 32, 28, 32, 256, 256, 1F);
-		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 		GL11.glColor3f(1F, 1F, 1F);
 		GL11.glEnable(GL11.GL_BLEND);

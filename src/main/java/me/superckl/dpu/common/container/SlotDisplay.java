@@ -2,9 +2,9 @@ package me.superckl.dpu.common.container;
 
 import java.util.List;
 
+import lombok.experimental.ExtensionMethod;
 import me.superckl.dpu.common.network.MessageItemSelect;
 import me.superckl.dpu.common.reference.ModData;
-import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -15,6 +15,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@ExtensionMethod(ItemStackHelper.class)
 public class SlotDisplay extends SlotSearch{
 
 	public SlotDisplay(final IInventory inventory, final int id, final int x, final int y) {
@@ -25,13 +26,9 @@ public class SlotDisplay extends SlotSearch{
 	@Override
 	public boolean onClick(final EntityPlayer player, ItemStack held, final boolean fromSearch, final boolean leftClick) {
 		final ItemStack stack = player.getHeldItem();
-		if(stack == null || stack.getItem() != ModItems.excludifier){
+		if(!stack.ensureExcludeNBT()){
 			player.closeScreen();
 			return false;
-		}
-		if(!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
-			stack.getTagCompound().setTag("items", new NBTTagList());
 		}
 		if(held != null){
 			held = held.copy();

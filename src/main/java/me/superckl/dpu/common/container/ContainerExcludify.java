@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import lombok.experimental.ExtensionMethod;
 import me.superckl.dpu.ItemHandler;
-import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,12 +15,12 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@ExtensionMethod(ItemStackHelper.class)
 public class ContainerExcludify extends Container{
 
 	private final EntityPlayer player;
@@ -49,13 +49,8 @@ public class ContainerExcludify extends Container{
 	public void refreshActiveList(){
 		this.itemList = new ArrayList<ItemStack>();
 		final ItemStack stack = this.player.getHeldItem();
-		if(stack == null || stack.getItem() != ModItems.excludifier){
+		if(!stack.ensureExcludeNBT()){
 			this.player.closeScreen();
-			return;
-		}
-		if(!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
-			stack.getTagCompound().setTag("items", new NBTTagList());
 			return;
 		}
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
@@ -123,17 +118,12 @@ public class ContainerExcludify extends Container{
 		if(this.activeInventory == null)
 			return;
 		final ItemStack stack = this.player.getHeldItem();
-		if(stack == null || stack.getItem() != ModItems.excludifier){
+		if(!stack.ensureExcludeNBT()){
 			this.player.closeScreen();
 			return;
 		}
-		if(!stack.hasTagCompound()){
-			stack.setTagCompound(new NBTTagCompound());
-			stack.getTagCompound().setTag("items", new NBTTagList());
-			return;
-		}
 		final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
-		final List<ItemStack> items = ItemStackHelper.convert(list);
+		final List<ItemStack> items = list.convert();
 		final int i = this.itemList.size() / 9 - (this.activeInventory == this.inventoryActive ? 3:8) + 1;
 		int j = (int)(scroll * i + 0.5D);
 
@@ -154,7 +144,6 @@ public class ContainerExcludify extends Container{
 						((SlotSearch)slot).setSelected(true);
 						((SlotSearch)slot).setSelectedIndex(index);
 						((SlotSearch)slot).setDelete(list.getCompoundTagAt(index).getBoolean("dpuDelete"));
-						//stack.getTagCompound().setTag("items", list);
 					}else if((slot = this.getSlot(l + k * 9)) instanceof SlotSearch)
 						((SlotSearch)slot).setSelected(false);
 				} else

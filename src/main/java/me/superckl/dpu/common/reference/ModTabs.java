@@ -17,8 +17,6 @@ public class ModTabs {
 			return "Don't Pick Up";
 		}
 
-
-
 	};
 
 }
