@@ -3,7 +3,7 @@
   "modid": "DPU",
   "name": "Don't Pick Up",
   "description": "Adds only one item, the Excludifier!",
-  "version": "0.2-Beta",
+  "version": "0.3-Beta",
   "mcversion": "1.7.10",
   "url": "",
   "updateUrl": "",

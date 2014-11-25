@@ -36,6 +36,10 @@ public class ItemExcludifier extends ItemDPU{
 		list.add("Currently excluding:");
 		for(int i = 0; i < nbtList.tagCount() && i < 3; i++)
 			list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
+		if(nbtList.tagCount() == 4){
+			list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(3)).getDisplayName());
+			return;
+		}
 		if(nbtList.tagCount() > 3)
 			if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
 				list.add(StringHelper.build("Hold ", EnumChatFormatting.ITALIC, "Shift ",EnumChatFormatting.RESET, EnumChatFormatting.GRAY, "for more..."));
