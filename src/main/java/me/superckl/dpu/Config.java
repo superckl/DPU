@@ -4,6 +4,7 @@ import java.io.File;
 
 import lombok.Getter;
 import me.superckl.dpu.common.reference.ModData;
+import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -14,7 +15,7 @@ public class Config {
 	@Getter
 	private final Configuration configFile;
 	@Getter
-	private boolean allowDelete;
+	private boolean allowDelete = true;
 	@Getter
 	private boolean noCreativeSearch;
 	@Getter
@@ -31,6 +32,7 @@ public class Config {
 		try{
 			this.configFile.load();
 		}catch(final Exception e){
+			LogHelper.warn("Failed to load configuration! All options will be set to their default values.");
 			e.printStackTrace();
 		}finally{
 			if(this.configFile.hasChanged())
@@ -40,9 +42,9 @@ public class Config {
 
 	public void loadValues(){
 		try{
-			this.allowDelete = this.configFile.getBoolean("Allow Deletions", Category.GENERAL, true, "If true, excludifiers players will be able to set excludifiers to delete certain items.");
-			this.noCreativeSearch = this.configFile.getBoolean("Disable Search Tab", Category.GENERAL, false, "If true, the search tab will not appear in the excludifier GUI. This cna be used if you feel it is unfair or over powered. If true, this value will be synced to the client.");
-			this.easyRecipe = this.configFile.getBoolean("Easy Recipe", Category.GENERAL, false, "If true, DPU will use an easier version of the recipe to allow the excludifier to be obtained early-game.");
+			this.allowDelete = this.configFile.getBoolean("Allow Deletions", Category.GENERAL, true, "If true, players will be able to set excludifiers to delete certain items.");
+			this.noCreativeSearch = this.configFile.getBoolean("Disable Search Tab", Category.GENERAL, false, "If true, the search tab will not appear in the excludifier GUI. This can be used if you feel it is unfair or over powered. If true, this value will be synced to the client.");
+			this.easyRecipe = this.configFile.getBoolean("Easy Recipe", Category.GENERAL, false, "If true, DPU will use an easier version of the recipe to allow the excludifier to be obtained early-game. If this value is mismatched between client and server, recipe mods such as NEI will display an incorrect recipe.");
 			this.configFile.save();
 		}catch(final Exception e){
 			e.printStackTrace();
