@@ -16,15 +16,39 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'java'
+apply plugin: 'maven'
 
-version = "0.3.${System.env.BUILD_NUMBER}-Beta"
+sourceSets.main{
+    java{
+        srcDirs = ['src/main/java']
+    }
+    resources{
+        srcDirs = ['src/main/resources']
+    }
+}
+
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+version = config.mod_version
 group= "me.superckl.dpu"
 archivesBaseName = "DPU"
 
 minecraft {
-    version = "1.7.10-10.13.2.1230"
+    version = config.minecraft_version + "-" + config.forge_version
+
+    replaceIn "reference/ModData.java"
+    replace "@VERSION@", "${config.mod_version}.${System.env.BUILD_NUMBER} ?: 0}"
     runDir = "eclipse"
 }
+
+version = "${config.minecraft_version}-${config.mod_version}.${System.getenv("BUILD_NUMBER") ?: 0}"
 
 dependencies {
     
@@ -34,16 +58,15 @@ dependencies {
 
 processResources
 {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
+     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand([
+        'mod_version': project.config.mod_version,
+        'minecraft_version': project.config.minecraft_version,
+        ])
     }
         
     // copy everything else, thats not the mcmod.info
