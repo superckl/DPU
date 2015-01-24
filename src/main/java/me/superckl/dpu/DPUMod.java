@@ -37,7 +37,8 @@ public class DPUMod {
 		LogHelper.info("Please note, you are running a beta version! Please report any bugs you find.");
 		this.config = new Config(e.getSuggestedConfigurationFile());
 		this.config.loadValues();
-		this.versionChecker = VersionChecker.start(ModData.MOD_ID, ModData.VERSION, MinecraftForge.MC_VERSION);
+		if(this.config.isVersionCheck())
+			this.versionChecker = VersionChecker.start(ModData.MOD_ID, ModData.VERSION, MinecraftForge.MC_VERSION);
 		ModItems.init();
 		DPUMod.proxy.registerHandlers();
 		DPUMod.proxy.registerBindings();
