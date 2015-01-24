@@ -23,6 +23,7 @@ public abstract class CommonProxy implements IProxy{
 		MinecraftForge.EVENT_BUS.register(new EntityHandler());
 		FMLCommonHandler.instance().bus().register(DPUMod.getInstance().getConfig());
 		FMLCommonHandler.instance().bus().register(new ConnectionHandler());
+		FMLCommonHandler.instance().bus().register(DPUMod.getInstance().getVersionChecker());
 		NetworkRegistry.INSTANCE.registerGuiHandler(DPUMod.getInstance(), new GuiHandler());
 		ModData.GUI_UPDATE_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModData.MOD_ID+":guiUpdate");
 		ModData.GUI_UPDATE_CHANNEL.registerMessage(MessageHandlerItemSelect.class, MessageItemSelect.class, 1, Side.SERVER);

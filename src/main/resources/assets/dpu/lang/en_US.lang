@@ -5,3 +5,5 @@ gui.dpu:config_general.name=Don't Pick Up General Configuration
 gui.dpu:excludify.name=Excludifier
 key.dpu.disableexclude=Disable Excludifier
 key.categories.dpu=DPU
+msg.update.text=A new version of DPU is available: %s
+msg.linkopen.text=Click to open the project page.

@@ -4,7 +4,9 @@ import lombok.Getter;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.LogHelper;
+import me.superckl.dpu.common.utlilty.VersionChecker;
 import me.superckl.dpu.proxy.IProxy;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -27,11 +29,15 @@ public class DPUMod {
 	@Getter
 	private Config config;
 
+	@Getter
+	private VersionChecker versionChecker;
+
 	@EventHandler
 	public void preInit(final FMLPreInitializationEvent e){
 		LogHelper.info("Please note, you are running a beta version! Please report any bugs you find.");
 		this.config = new Config(e.getSuggestedConfigurationFile());
 		this.config.loadValues();
+		this.versionChecker = VersionChecker.start(ModData.MOD_ID, ModData.VERSION, MinecraftForge.MC_VERSION);
 		ModItems.init();
 		DPUMod.proxy.registerHandlers();
 		DPUMod.proxy.registerBindings();
