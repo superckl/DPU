@@ -3,3 +3,5 @@ item.dpu:excludifier.name=Excludifier
 gui.dpu:config.name=Don't Pick Up Configuration
 gui.dpu:config_general.name=Don't Pick Up General Configuration
 gui.dpu:excludify.name=Excludifier
+key.dpu.disableexclude=Disable Excludifier
+key.categories.dpu=DPU

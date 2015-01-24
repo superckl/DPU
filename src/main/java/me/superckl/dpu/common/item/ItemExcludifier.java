@@ -2,9 +2,11 @@ package me.superckl.dpu.common.item;
 
 import java.util.List;
 
+import lombok.experimental.ExtensionMethod;
 import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModTabs;
+import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import me.superckl.dpu.common.utlilty.StringHelper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,6 +19,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import org.lwjgl.input.Keyboard;
 
+@ExtensionMethod(ItemStackHelper.class)
 public class ItemExcludifier extends ItemDPU{
 
 	public ItemExcludifier() {
@@ -25,10 +28,12 @@ public class ItemExcludifier extends ItemDPU{
 
 	@Override
 	public void addInformation(final ItemStack stack, final EntityPlayer player, final List list, final boolean par4) {
-		list.add("Click to exclude items from pickup");
-		if(!stack.hasTagCompound())
+		list.add("R-click to exclude items from pickup");
+		if(!stack.ensureExcludeNBT())
 			return;
 		final NBTTagCompound compound = stack.getTagCompound();
+		if(compound.getBoolean("disabled"))
+			list.add(StringHelper.build(EnumChatFormatting.RED, "Disabled"));
 		final NBTTagList nbtList = compound.getTagList("items", NBT.TAG_COMPOUND);
 		if(nbtList.tagCount() <= 0)
 			return;

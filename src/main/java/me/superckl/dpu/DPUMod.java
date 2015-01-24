@@ -34,6 +34,7 @@ public class DPUMod {
 		this.config.loadValues();
 		ModItems.init();
 		DPUMod.proxy.registerHandlers();
+		DPUMod.proxy.registerBindings();
 	}
 
 	@EventHandler

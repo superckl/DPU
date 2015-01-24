@@ -4,7 +4,9 @@ import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.gui.GuiHandler;
 import me.superckl.dpu.common.handler.ConnectionHandler;
 import me.superckl.dpu.common.network.MessageDeleteItemUpdate;
+import me.superckl.dpu.common.network.MessageDisableExcludifier;
 import me.superckl.dpu.common.network.MessageHandlerDeleteItemUpdate;
+import me.superckl.dpu.common.network.MessageHandlerDisableExcludifier;
 import me.superckl.dpu.common.network.MessageHandlerItemSelect;
 import me.superckl.dpu.common.network.MessageItemSelect;
 import me.superckl.dpu.common.reference.ModData;
@@ -26,6 +28,7 @@ public abstract class CommonProxy implements IProxy{
 		ModData.GUI_UPDATE_CHANNEL.registerMessage(MessageHandlerItemSelect.class, MessageItemSelect.class, 1, Side.SERVER);
 		ModData.GUI_UPDATE_CHANNEL.registerMessage(MessageHandlerDeleteItemUpdate.class, MessageDeleteItemUpdate.class, 2, Side.SERVER);
 		ModData.ITEM_DELETE_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModData.MOD_ID+":itemDelete");
+		ModData.ITEM_DELETE_CHANNEL.registerMessage(MessageHandlerDisableExcludifier.class, MessageDisableExcludifier.class, 0, Side.SERVER);
 		ModData.CONFIG_SYNC_CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModData.MOD_ID+":configSync");
 	}
 

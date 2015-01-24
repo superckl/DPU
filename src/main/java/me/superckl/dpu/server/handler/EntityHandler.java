@@ -1,9 +1,10 @@
 package me.superckl.dpu.server.handler;
 
+import lombok.experimental.ExtensionMethod;
 import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.network.MessageDeleteItem;
 import me.superckl.dpu.common.reference.ModData;
-import me.superckl.dpu.common.reference.ModItems;
+import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,6 +13,7 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 
+@ExtensionMethod(ItemStackHelper.class)
 public class EntityHandler {
 
 	@SubscribeEvent
@@ -20,8 +22,10 @@ public class EntityHandler {
 			return;
 		final ItemStack item = e.item.getEntityItem();
 		for(final ItemStack stack:e.entityPlayer.inventory.mainInventory)
-			if(stack != null && stack.getItem() == ModItems.excludifier && stack.hasTagCompound()){
+			if(stack.ensureExcludeNBT()){
 				final NBTTagCompound comp = stack.getTagCompound();
+				if(comp.getBoolean("disabled"))
+					continue;
 				final NBTTagList list = comp.getTagList("items", NBT.TAG_COMPOUND);
 				for(int i = 0; i < list.tagCount(); i++){
 					final ItemStack dpuStack = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
