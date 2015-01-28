@@ -21,7 +21,8 @@ public class EntityHandler {
 		if(e.entityPlayer == null)
 			return;
 		final ItemStack item = e.item.getEntityItem();
-		for(final ItemStack stack:e.entityPlayer.inventory.mainInventory)
+		for(int j = 0; j < (DPUMod.getInstance().getConfig().isHotbarOnly() ? 9:e.entityPlayer.inventory.mainInventory.length); j++){
+			final ItemStack stack = e.entityPlayer.inventory.mainInventory[j];
 			if(stack.ensureExcludeNBT()){
 				final NBTTagCompound comp = stack.getTagCompound();
 				if(comp.getBoolean("disabled"))
@@ -39,6 +40,7 @@ public class EntityHandler {
 					}
 				}
 			}
+		}
 	}
 
 }

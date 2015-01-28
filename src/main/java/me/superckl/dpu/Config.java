@@ -22,6 +22,8 @@ public class Config {
 	private boolean easyRecipe;
 	@Getter
 	private boolean versionCheck;
+	@Getter
+	private boolean hotbarOnly;
 
 	public static final class Category{
 
@@ -48,6 +50,7 @@ public class Config {
 			this.noCreativeSearch = this.configFile.getBoolean("Disable Search Tab", Category.GENERAL, false, "If true, the search tab will not appear in the excludifier GUI. This can be used if you feel it is unfair or over powered. If true, this value will be synced to the client.");
 			this.easyRecipe = this.configFile.getBoolean("Easy Recipe", Category.GENERAL, false, "If true, DPU will use an easier version of the recipe to allow the excludifier to be obtained early-game. If this value is mismatched between client and server, recipe mods such as NEI will display an incorrect recipe.");
 			this.versionCheck = this.configFile.getBoolean("Version Check", Category.GENERAL, true, "If true, DPU will attempt to contact Not Enough Mods to check if a newer version is available. (Requires internet connection)");
+			this.hotbarOnly = this.configFile.getBoolean("Hotbar Only", Category.GENERAL, false, "If true, DPU will only search a player's hotbar for excludifiers. This value is taken from the server side.");
 			this.configFile.save();
 		}catch(final Exception e){
 			e.printStackTrace();
