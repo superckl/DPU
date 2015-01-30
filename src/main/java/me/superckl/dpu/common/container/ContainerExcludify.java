@@ -6,6 +6,8 @@ import java.util.List;
 
 import lombok.experimental.ExtensionMethod;
 import me.superckl.dpu.ItemHandler;
+import me.superckl.dpu.common.network.MessageItemSelect;
+import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +17,7 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 import cpw.mods.fml.relauncher.Side;
@@ -174,8 +177,26 @@ public class ContainerExcludify extends Container{
 	protected void retrySlotClick(final int p_75133_1_, final int p_75133_2_, final boolean p_75133_3_, final EntityPlayer p_75133_4_) {}
 
 	@Override
-	public ItemStack transferStackInSlot(final EntityPlayer p_82846_1_, final int p_82846_2_) {
-		// TODO
+	public ItemStack transferStackInSlot(final EntityPlayer player, final int i) {
+		if(this.activeInventory == this.inventoryActive && i >= 27){
+			final ItemStack stack = player.getHeldItem();
+			if(!stack.ensureExcludeNBT()){
+				player.closeScreen();
+				return null;
+			}
+			final Slot slot = this.getSlot(i);
+			if(!slot.getHasStack())
+				return null;
+			final ItemStack held = slot.getStack().copy();
+			held.stackSize = 1;
+			final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
+			final List<ItemStack> items = ItemStackHelper.convert(list);
+			if(ItemStackHelper.contains(items, held) != -1)
+				return null;
+			list.appendTag(held.writeToNBT(new NBTTagCompound()));
+			((ContainerExcludify)player.openContainer).onActiveItemChange(list.tagCount()-1, true);
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(held, list.tagCount()-1, true, false));
+		}
 		return null;
 	}
 
