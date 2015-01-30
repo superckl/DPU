@@ -23,7 +23,7 @@ import org.lwjgl.input.Keyboard;
 public class ItemExcludifier extends ItemDPU{
 
 	public ItemExcludifier() {
-		this.setMaxStackSize(1).setUnlocalizedName("excludifier").setCreativeTab(ModTabs.TAB_DPU);
+		this.setMaxStackSize(1).setUnlocalizedName("excludifier").setCreativeTab(ModTabs.TAB_DPU).setContainerItem(this);
 	}
 
 	@Override
@@ -53,7 +53,15 @@ public class ItemExcludifier extends ItemDPU{
 					list.add(ItemStack.loadItemStackFromNBT(nbtList.getCompoundTagAt(i)).getDisplayName());
 	}
 
+	@Override
+	public boolean doesContainerItemLeaveCraftingGrid(final ItemStack stack) {
+		return false;
+	}
 
+	@Override
+	public ItemStack getContainerItem(final ItemStack itemStack) {
+		return itemStack.copy();
+	}
 
 	@Override
 	public ItemStack onItemRightClick(final ItemStack stack, final World world, final EntityPlayer player) {

@@ -68,7 +68,7 @@ public class SlotSearch extends Slot{
 			this.selected = true;
 			this.selectedIndex = list.tagCount();
 			final List<ItemStack> items = ItemStackHelper.convert(list);
-			if(ItemStackHelper.contains(items, this.getStack()) != -1)
+			if(ItemStackHelper.find(items, this.getStack()) != -1)
 				return false;
 			list.appendTag(this.getStack().writeToNBT(new NBTTagCompound()));
 			if(!leftClick){

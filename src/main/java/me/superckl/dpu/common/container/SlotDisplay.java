@@ -35,7 +35,7 @@ public class SlotDisplay extends SlotSearch{
 			held.stackSize = 1;
 			final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
 			final List<ItemStack> items = ItemStackHelper.convert(list);
-			if(ItemStackHelper.contains(items, held) != -1)
+			if(ItemStackHelper.find(items, held) != -1)
 				return false;
 			this.setSelectedIndex(list.tagCount());
 			list.appendTag(held.writeToNBT(new NBTTagCompound()));

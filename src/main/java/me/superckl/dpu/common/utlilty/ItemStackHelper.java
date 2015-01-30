@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagList;
 
 public class ItemStackHelper {
 
-	public static int contains(final List<ItemStack> stacks, final ItemStack stack){
+	public static int find(final List<ItemStack> stacks, final ItemStack stack){
 		for(int i = 0; i < stacks.size(); i++){
 			final ItemStack s = stacks.get(i);
 			if(s == null)
@@ -26,6 +26,18 @@ public class ItemStackHelper {
 		for(int i = 0; i < list.tagCount(); i++)
 			items.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
 		return items;
+	}
+
+	public static List<ItemStack> removeDuplicates(final List<ItemStack> stacks){
+		int index;
+		for(int i = 0;;i++){
+			if(i >= stacks.size())
+				break;
+			final ItemStack stack = stacks.get(i);
+			while((index=ItemStackHelper.find(stacks, stack)) != -1 && index != i)
+				stacks.remove(index);
+		}
+		return stacks;
 	}
 
 	public static boolean ensureExcludeNBT(final ItemStack stack){

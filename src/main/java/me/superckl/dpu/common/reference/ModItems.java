@@ -1,6 +1,7 @@
 package me.superckl.dpu.common.reference;
 
 import me.superckl.dpu.DPUMod;
+import me.superckl.dpu.common.crafting.RecipeExcludifierNBT;
 import me.superckl.dpu.common.item.ItemExcludifier;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -19,6 +20,8 @@ public class ModItems {
 
 	public static void init(){
 		GameRegistry.registerItem(ModItems.excludifier, "excludifier");
+		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.excludifier), ModItems.excludifier);
+		GameRegistry.addRecipe(new RecipeExcludifierNBT());
 		OreDictionary.registerOre("glass", Blocks.glass);
 		if(DPUMod.getInstance().getConfig().isEasyRecipe())
 			GameRegistry.addRecipe(new ShapedOreRecipe(ModItems.excludifier, "xyx", "xzx", "xwx", 'x', "stone", 'y', "glass", 'z', Blocks.stone_button, 'w', Blocks.stone_slab));

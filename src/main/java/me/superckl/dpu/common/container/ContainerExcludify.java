@@ -146,7 +146,7 @@ public class ContainerExcludify extends Container{
 					this.activeInventory.setInventorySlotContents(l + k * 9, stack1);
 					Slot slot;
 					int index;
-					if((index = ItemStackHelper.contains(items, stack1)) != -1 && (slot = this.getSlot(l + k * 9)) instanceof SlotSearch){
+					if((index = ItemStackHelper.find(items, stack1)) != -1 && (slot = this.getSlot(l + k * 9)) instanceof SlotSearch){
 						((SlotSearch)slot).setSelected(true);
 						((SlotSearch)slot).setSelectedIndex(index);
 						((SlotSearch)slot).setDelete(list.getCompoundTagAt(index).getBoolean("dpuDelete"));
@@ -187,15 +187,15 @@ public class ContainerExcludify extends Container{
 			final Slot slot = this.getSlot(i);
 			if(!slot.getHasStack())
 				return null;
-			final ItemStack held = slot.getStack().copy();
-			held.stackSize = 1;
+			final ItemStack clicked = slot.getStack().copy();
+			clicked.stackSize = 1;
 			final NBTTagList list = stack.getTagCompound().getTagList("items", NBT.TAG_COMPOUND);
-			final List<ItemStack> items = ItemStackHelper.convert(list);
-			if(ItemStackHelper.contains(items, held) != -1)
+			final List<ItemStack> items = list.convert();
+			if(ItemStackHelper.find(items, clicked) != -1)
 				return null;
-			list.appendTag(held.writeToNBT(new NBTTagCompound()));
+			list.appendTag(clicked.writeToNBT(new NBTTagCompound()));
 			((ContainerExcludify)player.openContainer).onActiveItemChange(list.tagCount()-1, true);
-			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(held, list.tagCount()-1, true, false));
+			ModData.GUI_UPDATE_CHANNEL.sendToServer(new MessageItemSelect(clicked, list.tagCount()-1, true, false));
 		}
 		return null;
 	}
