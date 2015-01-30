@@ -1,5 +1,7 @@
 package me.superckl.dpu.client.gui;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import me.superckl.dpu.DPUMod;
@@ -9,6 +11,7 @@ import me.superckl.dpu.common.container.SlotSearch;
 import me.superckl.dpu.common.network.MessageNoSearch;
 import me.superckl.dpu.common.reference.ModData;
 import me.superckl.dpu.common.reference.ModItems;
+import me.superckl.dpu.common.utlilty.LogHelper;
 import me.superckl.dpu.common.utlilty.RenderHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -23,6 +26,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.relauncher.ReflectionHelper;
 
 public class GuiContainerExcludify extends GuiContainer{
 
@@ -39,6 +44,7 @@ public class GuiContainerExcludify extends GuiContainer{
 	private boolean onlyActive = true;
 	private boolean wasClicking;
 	private boolean isScrolling;
+	private String NEIWord;
 
 	public GuiContainerExcludify(final EntityPlayer player) {
 		super(new ContainerExcludify(player));
@@ -159,6 +165,24 @@ public class GuiContainerExcludify extends GuiContainer{
 		else
 			containerExcludify.refreshActiveList();
 		this.updateFilteredItems(containerExcludify);
+		try{
+			if (DPUMod.getInstance().getConfig().isSyncNEISearch() && this.NEIWord == null || !this.NEIWord.equals(this.textField.getText()))
+			{
+				final Class c = ReflectionHelper.getClass(this.getClass().getClassLoader(), "codechicken.nei.LayoutManager");
+				final Field fldSearchField = c.getField("searchField");
+				final Object searchField = fldSearchField.get(c);
+
+				final Method a = searchField.getClass().getMethod("setText", String.class);
+				final Method b = searchField.getClass().getMethod("onTextChange", String.class);
+
+				this.NEIWord = this.textField.getText();
+				a.invoke(searchField, this.textField.getText());
+				b.invoke(searchField, "");
+			}
+		}catch (final Throwable ignore){
+			LogHelper.debug("An error was caught while trying to update NEI search! You should disable search syncing if this persists (and report it).");
+			LogHelper.debug(ignore.toString());
+		}
 	}
 
 	private void updateFilteredItems(final ContainerExcludify containerExcludify)

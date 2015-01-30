@@ -11,3 +11,4 @@ build.bat
 desktop.ini
 eclipse.bat
 setup.bat
+src/main/resources/nei_at.cfg

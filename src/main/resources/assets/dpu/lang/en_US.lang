@@ -1,7 +1,9 @@
-dpu.configgui.ctgy.general.tooltip=Configure general DPU elements
+dpu.configgui.ctgy.general.tooltip=Configure DPU elements relating to NotEnoughItems
+dpu.configgui.ctgy.nei.tooltip=Configure general DPU elements
 item.dpu:excludifier.name=Excludifier
 gui.dpu:config.name=Don't Pick Up Configuration
 gui.dpu:config_general.name=Don't Pick Up General Configuration
+gui.dpu:config_nei.name=Don't Pick Up NEI Configuration
 gui.dpu:excludify.name=Excludifier
 key.dpu.disableexclude=Disable Excludifier
 key.categories.dpu=DPU

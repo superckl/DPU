@@ -8,6 +8,7 @@ import me.superckl.dpu.common.utlilty.LogHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class Config {
@@ -24,10 +25,13 @@ public class Config {
 	private boolean versionCheck;
 	@Getter
 	private boolean hotbarOnly;
+	@Getter
+	private boolean syncNEISearch;
 
 	public static final class Category{
 
 		public static String GENERAL = "general";
+		public static String NEI = "nei";
 
 	}
 
@@ -51,6 +55,8 @@ public class Config {
 			this.easyRecipe = this.configFile.getBoolean("Easy Recipe", Category.GENERAL, false, "If true, DPU will use an easier version of the recipe to allow the excludifier to be obtained early-game. If this value is mismatched between client and server, recipe mods such as NEI will display an incorrect recipe.");
 			this.versionCheck = this.configFile.getBoolean("Version Check", Category.GENERAL, true, "If true, DPU will attempt to contact Not Enough Mods to check if a newer version is available. (Requires internet connection)");
 			this.hotbarOnly = this.configFile.getBoolean("Hotbar Only", Category.GENERAL, false, "If true, DPU will only search a player's hotbar for excludifiers. This value is taken from the server side.");
+			if(Loader.isModLoaded("NotEnoughItems"))
+				this.syncNEISearch = this.configFile.getBoolean("Synchronize NEI Search", Category.NEI, true, "If true, NEI's search bar will be synchornized with DPU's.");
 			this.configFile.save();
 		}catch(final Exception e){
 			e.printStackTrace();

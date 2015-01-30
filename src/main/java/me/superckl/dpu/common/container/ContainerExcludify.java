@@ -111,7 +111,10 @@ public class ContainerExcludify extends Container{
 	}
 
 	@Override
-	public void putStackInSlot(final int p_75141_1_, final ItemStack p_75141_2_) {}
+	public void putStackInSlot(final int slot, final ItemStack stack) {
+		if(this.activeInventory == this.inventoryActive && slot >= 27)
+			this.getSlot(slot).putStack(stack);
+	}
 
 	public void scrollTo(final float scroll)
 	{
