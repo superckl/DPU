@@ -20,7 +20,8 @@ public class ModItems {
 
 	public static void init(){
 		GameRegistry.registerItem(ModItems.excludifier, "excludifier");
-		GameRegistry.addShapelessRecipe(new ItemStack(ModItems.excludifier), ModItems.excludifier);
+		if(DPUMod.getInstance().getConfig().isAllowNBTClearing())
+			GameRegistry.addShapelessRecipe(new ItemStack(ModItems.excludifier), ModItems.excludifier);
 		GameRegistry.addRecipe(new RecipeExcludifierNBT());
 		OreDictionary.registerOre("glass", Blocks.glass);
 		if(DPUMod.getInstance().getConfig().isEasyRecipe())

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import lombok.experimental.ExtensionMethod;
+import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.reference.ModItems;
 import me.superckl.dpu.common.utlilty.ItemStackHelper;
 import net.minecraft.inventory.IInventory;
@@ -28,6 +29,8 @@ public class RecipeExcludifierNBT implements IRecipe{
 	}
 
 	private boolean matches(final IInventory crafting){
+		if(!DPUMod.getInstance().getConfig().isAllowNBTCopying())
+			return false;
 		final ItemStack req = crafting.getStackInSlot(0);
 		if(req == null || req.getItem() != ModItems.excludifier)
 			return false;

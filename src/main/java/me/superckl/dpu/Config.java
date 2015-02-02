@@ -27,6 +27,10 @@ public class Config {
 	private boolean hotbarOnly;
 	@Getter
 	private boolean syncNEISearch;
+	@Getter
+	private boolean allowNBTCopying;
+	@Getter
+	private boolean allowNBTClearing;
 
 	public static final class Category{
 
@@ -55,6 +59,8 @@ public class Config {
 			this.easyRecipe = this.configFile.getBoolean("Easy Recipe", Category.GENERAL, false, "If true, DPU will use an easier version of the recipe to allow the excludifier to be obtained early-game. If this value is mismatched between client and server, recipe mods such as NEI will display an incorrect recipe.");
 			this.versionCheck = this.configFile.getBoolean("Version Check", Category.GENERAL, true, "If true, DPU will attempt to contact Not Enough Mods to check if a newer version is available. (Requires internet connection)");
 			this.hotbarOnly = this.configFile.getBoolean("Hotbar Only", Category.GENERAL, false, "If true, DPU will only search a player's hotbar for excludifiers. This value is taken from the server side.");
+			this.allowNBTClearing = this.configFile.getBoolean("Allow NBT Clearing", Category.GENERAL, true, "If true, players will be able to clear NBT data from their excludifers.");
+			this.allowNBTCopying = this.configFile.getBoolean("Allow NBT Copying", Category.GENERAL, true, "If true, players will be able to copy NBT from other excludifers.");
 			if(Loader.isModLoaded("NotEnoughItems"))
 				this.syncNEISearch = this.configFile.getBoolean("Synchronize NEI Search", Category.NEI, true, "If true, NEI's search bar will be synchornized with DPU's.");
 			this.configFile.save();
