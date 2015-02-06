@@ -1,5 +1,14 @@
 package me.superckl.dpu.server.handler;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.experimental.ExtensionMethod;
 import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.network.MessageDeleteItem;
@@ -16,10 +25,21 @@ import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 @ExtensionMethod(ItemStackHelper.class)
 public class EntityHandler {
 
+	private final Map<UUID, Set<UUID>> stash = new ConcurrentHashMap<UUID, Set<UUID>>();
+	private final Timer timer = new Timer();
+
 	@SubscribeEvent
 	public void onEntityPickupItem(final EntityItemPickupEvent e){
 		if(e.entityPlayer == null)
 			return;
+		final int delay = DPUMod.getInstance().getConfig().getTrackTimer();
+		if(delay > 0 && this.stash.containsKey(e.item.getUniqueID())){
+			final Set<UUID> uuids = this.stash.get(e.item.getUniqueID());
+			if(uuids.contains(e.entityPlayer.getGameProfile().getId())){
+				e.setCanceled(true);
+				return;
+			}
+		}
 		final ItemStack item = e.item.getEntityItem();
 		for(int j = 0; j < (DPUMod.getInstance().getConfig().isHotbarOnly() ? 9:e.entityPlayer.inventory.mainInventory.length); j++){
 			final ItemStack stack = e.entityPlayer.inventory.mainInventory[j];
@@ -35,12 +55,38 @@ public class EntityHandler {
 						if(DPUMod.getInstance().getConfig().isAllowDelete() && list.getCompoundTagAt(i).getBoolean("dpuDelete")){
 							e.item.setDead();
 							ModData.ITEM_DELETE_CHANNEL.sendToAllAround(new MessageDeleteItem(e.item.posX, e.item.posY, e.item.posZ), new TargetPoint(e.entityPlayer.dimension, e.item.posX, e.item.posY, e.item.posZ, 20D));
-						}
+						}else if(delay > 0)
+							this.scheduleDelay(e.item.getUniqueID(), e.entityPlayer.getGameProfile().getId(), delay);
 						return;
 					}
 				}
 			}
 		}
+	}
+
+	public void scheduleDelay(final UUID item, final UUID player, final int delay){
+		if(this.stash.containsKey(item)){
+			final Set<UUID> uuids = this.stash.get(item);
+			uuids.add(player);
+		}else{
+			final Set<UUID> uuids = Collections.synchronizedSet(new HashSet<UUID>());
+			uuids.add(player);
+			this.stash.put(item, uuids);
+		}
+
+		this.timer.schedule(new TimerTask() {
+
+			@Override
+			public void run() {
+				if(EntityHandler.this.stash.containsKey(item)){
+					final Set<UUID> uuids = EntityHandler.this.stash.get(item);
+					uuids.remove(player);
+					if(uuids.isEmpty())
+						EntityHandler.this.stash.remove(item);
+
+				}
+			}
+		}, (long) (delay/20F*1000F));
 	}
 
 }

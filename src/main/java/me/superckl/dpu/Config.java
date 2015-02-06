@@ -31,6 +31,8 @@ public class Config {
 	private boolean allowNBTCopying;
 	@Getter
 	private boolean allowNBTClearing;
+	@Getter
+	private int trackTimer;
 
 	public static final class Category{
 
@@ -61,6 +63,7 @@ public class Config {
 			this.hotbarOnly = this.configFile.getBoolean("Hotbar Only", Category.GENERAL, false, "If true, DPU will only search a player's hotbar for excludifiers. This value is taken from the server side.");
 			this.allowNBTClearing = this.configFile.getBoolean("Allow NBT Clearing", Category.GENERAL, true, "If true, players will be able to clear NBT data from their excludifers.");
 			this.allowNBTCopying = this.configFile.getBoolean("Allow NBT Copying", Category.GENERAL, true, "If true, players will be able to copy NBT from other excludifers.");
+			this.trackTimer = this.configFile.getInt("Item Track Timer", Category.GENERAL, 20, 0, Integer.MAX_VALUE, "Determines how long DPU will wait before searching a player's inventory again. i.e. If set to 20, when DPU blocks an item pick-up, it will wait 20 ticks before again searching the player's inventory for excludifers. During this time, the pickup will be blocked by UUID.");
 			if(Loader.isModLoaded("NotEnoughItems"))
 				this.syncNEISearch = this.configFile.getBoolean("Synchronize NEI Search", Category.NEI, true, "If true, NEI's search bar will be synchornized with DPU's.");
 			this.configFile.save();
