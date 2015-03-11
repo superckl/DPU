@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.experimental.ExtensionMethod;
+import me.superckl.dpu.Config;
 import me.superckl.dpu.DPUMod;
 import me.superckl.dpu.common.network.MessageDeleteItem;
 import me.superckl.dpu.common.reference.ModData;
@@ -32,7 +33,8 @@ public class EntityHandler {
 	public void onEntityPickupItem(final EntityItemPickupEvent e){
 		if(e.entityPlayer == null)
 			return;
-		final int delay = DPUMod.getInstance().getConfig().getTrackTimer();
+		final Config c = DPUMod.getInstance().getConfig();
+		final int delay = c.getTrackTimer();
 		if(delay > 0 && this.stash.containsKey(e.item.getUniqueID())){
 			final Set<UUID> uuids = this.stash.get(e.item.getUniqueID());
 			if(uuids.contains(e.entityPlayer.getGameProfile().getId())){
@@ -41,7 +43,7 @@ public class EntityHandler {
 			}
 		}
 		final ItemStack item = e.item.getEntityItem();
-		for(int j = 0; j < (DPUMod.getInstance().getConfig().isHotbarOnly() ? 9:e.entityPlayer.inventory.mainInventory.length); j++){
+		for(int j = 0; j < (c.isHotbarOnly() ? 9:e.entityPlayer.inventory.mainInventory.length); j++){
 			final ItemStack stack = e.entityPlayer.inventory.mainInventory[j];
 			if(stack.ensureExcludeNBT()){
 				final NBTTagCompound comp = stack.getTagCompound();
@@ -52,7 +54,12 @@ public class EntityHandler {
 					final ItemStack dpuStack = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
 					if(dpuStack.isItemEqual(item)){
 						e.setCanceled(true);
-						if(DPUMod.getInstance().getConfig().isAllowDelete() && list.getCompoundTagAt(i).getBoolean("dpuDelete")){
+						if(c.isShortenLife()){
+							final int life = c.getShortenLifeTo();
+							if(e.item.lifespan-e.item.age > life)
+								e.item.age = e.item.lifespan-life;
+						}
+						if(c.isAllowDelete() && list.getCompoundTagAt(i).getBoolean("dpuDelete")){
 							e.item.setDead();
 							ModData.ITEM_DELETE_CHANNEL.sendToAllAround(new MessageDeleteItem(e.item.posX, e.item.posY, e.item.posZ), new TargetPoint(e.entityPlayer.dimension, e.item.posX, e.item.posY, e.item.posZ, 20D));
 						}else if(delay > 0)

@@ -11,28 +11,21 @@ import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+@Getter
 public class Config {
 
-	@Getter
 	private final Configuration configFile;
-	@Getter
 	private boolean allowDelete = true;
-	@Getter
 	private boolean noCreativeSearch;
-	@Getter
 	private boolean easyRecipe;
-	@Getter
 	private boolean versionCheck;
-	@Getter
 	private boolean hotbarOnly;
-	@Getter
 	private boolean syncNEISearch;
-	@Getter
 	private boolean allowNBTCopying;
-	@Getter
 	private boolean allowNBTClearing;
-	@Getter
 	private int trackTimer;
+	private boolean shortenLife;
+	private int shortenLifeTo;
 
 	public static final class Category{
 
@@ -64,6 +57,8 @@ public class Config {
 			this.allowNBTClearing = this.configFile.getBoolean("Allow NBT Clearing", Category.GENERAL, true, "If true, players will be able to clear NBT data from their excludifers.");
 			this.allowNBTCopying = this.configFile.getBoolean("Allow NBT Copying", Category.GENERAL, true, "If true, players will be able to copy NBT from other excludifers.");
 			this.trackTimer = this.configFile.getInt("Item Track Timer", Category.GENERAL, 20, 0, Integer.MAX_VALUE, "Determines how long DPU will wait before searching a player's inventory again. i.e. If set to 20, when DPU blocks an item pick-up, it will wait 20 ticks before again searching the player's inventory for excludifers. During this time, the pickup will be blocked by UUID.");
+			this.shortenLife = this.configFile.getBoolean("Shorten Lifespan", Category.GENERAL, false, "If true, DPU will shorten the time for an item entity to despawn if it denies the pickup.");
+			this.shortenLifeTo = this.configFile.getInt("Shoten Lifespan To", Category.GENERAL, 600, 0, Integer.MAX_VALUE, "The value to shorten an item entity's remaining time. This is measured in ticks and is only applied if Shorten Lifespan is true.");
 			if(Loader.isModLoaded("NotEnoughItems"))
 				this.syncNEISearch = this.configFile.getBoolean("Synchronize NEI Search", Category.NEI, true, "If true, NEI's search bar will be synchornized with DPU's.");
 			this.configFile.save();
