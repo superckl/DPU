@@ -332,7 +332,7 @@ public class GuiContainerExcludify extends GuiContainer{
 					GL11.glDisable(GL11.GL_DEPTH_TEST);
 					this.zLevel = 300F;
 					GuiScreen.itemRender.zLevel = 300F;
-					this.fontRendererObj.drawString("x", slot.xDisplayPosition, slot.yDisplayPosition+8, 0xFF0000);
+					this.fontRendererObj.drawString("x", slot.xDisplayPosition+10, slot.yDisplayPosition+8, 0xFF0000);
 					GuiScreen.itemRender.zLevel = 0F;
 					this.zLevel = 0F;
 					GL11.glEnable(GL11.GL_DEPTH_TEST);
