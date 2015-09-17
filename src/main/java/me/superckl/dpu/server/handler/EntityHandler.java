@@ -35,11 +35,13 @@ public class EntityHandler {
 			return;
 		final Config c = DPUMod.getInstance().getConfig();
 		final int delay = c.getTrackTimer();
-		if(delay > 0 && this.stash.containsKey(e.item.getUniqueID())){
-			final Set<UUID> uuids = this.stash.get(e.item.getUniqueID());
-			if(uuids.contains(e.entityPlayer.getGameProfile().getId())){
-				e.setCanceled(true);
-				return;
+		synchronized (this.stash) {
+			if(delay > 0 && this.stash.containsKey(e.item.getUniqueID())){
+				final Set<UUID> uuids = this.stash.get(e.item.getUniqueID());
+				if(uuids.contains(e.entityPlayer.getGameProfile().getId())){
+					e.setCanceled(true);
+					return;
+				}
 			}
 		}
 		final ItemStack item = e.item.getEntityItem();
@@ -72,25 +74,29 @@ public class EntityHandler {
 	}
 
 	public void scheduleDelay(final UUID item, final UUID player, final int delay){
-		if(this.stash.containsKey(item)){
-			final Set<UUID> uuids = this.stash.get(item);
-			uuids.add(player);
-		}else{
-			final Set<UUID> uuids = Collections.synchronizedSet(new HashSet<UUID>());
-			uuids.add(player);
-			this.stash.put(item, uuids);
+		synchronized(this.stash){
+			if(this.stash.containsKey(item)){
+				final Set<UUID> uuids = this.stash.get(item);
+				uuids.add(player);
+			}else{
+				final Set<UUID> uuids = Collections.synchronizedSet(new HashSet<UUID>());
+				uuids.add(player);
+				this.stash.put(item, uuids);
+			}
 		}
 
 		this.timer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
-				if(EntityHandler.this.stash.containsKey(item)){
-					final Set<UUID> uuids = EntityHandler.this.stash.get(item);
-					uuids.remove(player);
-					if(uuids.isEmpty())
-						EntityHandler.this.stash.remove(item);
+				synchronized (EntityHandler.this.stash) {
+					if(EntityHandler.this.stash.containsKey(item)){
+						final Set<UUID> uuids = EntityHandler.this.stash.get(item);
+						uuids.remove(player);
+						if(uuids.isEmpty())
+							EntityHandler.this.stash.remove(item);
 
+					}
 				}
 			}
 		}, (long) (delay/20F*1000F));

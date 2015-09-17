@@ -52,7 +52,7 @@ group= "me.superckl.dpu"
 archivesBaseName = "DPU"
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version
+    version = config.forge_version+ "-" + config.minecraft_version
 
     replaceIn "reference/ModData.java"
     replace "@VERSION@", "${config.mod_version}.${System.env.BUILD_NUMBER ?: 0}"
@@ -62,10 +62,9 @@ minecraft {
 version = "${config.minecraft_version}-${config.mod_version}.${System.getenv("BUILD_NUMBER") ?: 0}"
 
 dependencies {
-    
+
     compile "org.projectlombok:lombok:1.16.0"
-    compile "mcp.mobius.waila:Waila:1.5.8a_1.7.10"
-    
+
 }
 
 processResources
@@ -73,14 +72,14 @@ processResources
      // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand([
         'mod_version': project.config.mod_version,
         'minecraft_version': project.config.minecraft_version,
         ])
     }
-        
+
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
